@@ -33,29 +33,35 @@ export interface TemplateOrder {
 // Helper to normalize legacy and multi-category template objects
 export function normalizeTemplate(raw: any): WebsiteTemplate {
   let cats: string[] = [];
-  if (Array.isArray(raw.categories) && raw.categories.length > 0) {
-    cats = raw.categories.filter((c: any) => typeof c === 'string' && c.trim().length > 0);
-  } else if (raw.category && typeof raw.category === 'string' && raw.category.trim().length > 0) {
-    cats = [raw.category.trim()];
-  } else {
+  if (Array.isArray(raw.categories)) {
+    cats = raw.categories
+      .map((c: any) => typeof c === 'object' && c !== null ? (c.id || c.name || '') : c)
+      .filter((c: any) => typeof c === 'string' && c.trim().length > 0);
+  }
+  if (cats.length === 0 && raw.category) {
+    const fallback = typeof raw.category === 'object' && raw.category !== null 
+      ? (raw.category.id || raw.category.name || '') 
+      : raw.category;
+    if (typeof fallback === 'string' && fallback.trim().length > 0) {
+      cats = [fallback.trim()];
+    }
+  }
+  if (cats.length === 0) {
     cats = ['services'];
   }
-  
-  // Deduplicate case-insensitively
   const seen = new Set<string>();
   const uniqueCats: string[] = [];
   for (const c of cats) {
-    const lower = c.toLowerCase();
+    const lower = String(c).toLowerCase();
     if (!seen.has(lower)) {
       seen.add(lower);
-      uniqueCats.push(c);
+      uniqueCats.push(String(c));
     }
   }
-
   return {
     ...raw,
     categories: uniqueCats,
-    category: uniqueCats[0] || raw.category || 'services'
+    category: uniqueCats[0] || 'services'
   };
 }
 

@@ -102,7 +102,9 @@ export const AdminWebsiteTemplatesDashboard: React.FC<AdminWebsiteTemplatesDashb
   }, [templates, searchQuery, categoryFilter, statusFilter]);
 
   // Map category ID to clean human-readable name
-  const getCategoryName = (id: string) => {
+  const getCategoryName = (id: any) => {
+    if (!id) return "Unknown";
+    if (typeof id === "object") return id.name || id.id || "Unknown";
     const found = categoriesStorage.getAll().find(c => c.id === id);
     return found ? found.name : id;
   };
