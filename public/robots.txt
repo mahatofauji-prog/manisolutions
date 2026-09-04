@@ -1,0 +1,10 @@
+# Robots.txt for MANI Solution (https://www.manisolution.com)
+User-agent: *
+Allow: /
+
+# Private Admin Portal - Do not crawl
+Disallow: /solution011253
+Disallow: /solution011253/
+Disallow: /api/
+
+Sitemap: https://www.manisolution.com/sitemap.xml

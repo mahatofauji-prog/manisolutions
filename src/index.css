@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --theme-bg-main: #F7F6F2;
+  --theme-bg-secondary: #FCFBF8;
+  --theme-white: #FFFFFF;
+  --theme-text-primary: #171A1F;
+  --theme-text-secondary: #626873;
+  --theme-text-muted: #7A7F87;
+  --theme-gold: #C79A22;
+  --theme-gold-hover: #A97E12;
+  --theme-gold-light: #FBF5E5;
+  --theme-border: #E4E1DA;
+  --theme-dark: #171A1F;
+}
+
+@layer base {
+  * {
+    border-color: var(--theme-border);
+  }
+  body {
+    background-color: var(--theme-bg-main);
+    color: var(--theme-text-primary);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--theme-bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: #C4C3BE;
+  border-radius: 4px;
+  border: 2px solid var(--theme-bg-main);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-gold);
+}
+
+/* Gold Gradient Text & Accents */
+.gold-gradient,
+.text-gold-gradient {
+  background: linear-gradient(135deg, #C79A22 0%, #A97E12 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-gold-bright {
+  background: linear-gradient(135deg, #DFB23A 0%, #C79A22 50%, #A97E12 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #C79A22 0%, #A97E12 100%);
+}
+.bg-gold-glow,
+.glow {
+  box-shadow: 0 0 25px rgba(199, 154, 34, 0.15);
+}
+.border-gold-subtle {
+  border-color: rgba(199, 154, 34, 0.3);
+}
+
+/* Subtle Grid Backgrounds */
+.bg-tech-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+.bg-tech-dots {
+  background-image: radial-gradient(rgba(199, 154, 34, 0.15) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Premium Light Glassmorphism / Cards */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--theme-border);
+}
+
+.glass-card {
+  background: var(--theme-white);
+  border: 1px solid var(--theme-border);
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(30, 30, 30, 0.06);
+}
+
+.glass-card-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-hover:hover {
+  background: var(--theme-white);
+  border-color: var(--theme-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(30, 30, 30, 0.06);
+}

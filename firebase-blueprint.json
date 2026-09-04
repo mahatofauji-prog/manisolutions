@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "settings": {
+      "description": "Global application configuration and site-wide settings",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Setting key identifier"
+        },
+        "value": {
+          "description": "Setting payload"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of last update"
+        }
+      },
+      "required": ["id"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "business_ai_solutions": {
+      "description": "AI & Automation Solutions catalogue",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Solution unique ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Solution title"
+        }
+      },
+      "required": ["id", "title"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "ready_solutions": {
+      "description": "Ready Solutions products catalogue",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title"
+        }
+      },
+      "required": ["id", "title"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "portfolio_solutions": {
+      "description": "Featured Projects & Portfolio Items",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Project ID"
+        },
+        "title": {
+          "type": "string",
+          "description": "Project title"
+        }
+      },
+      "required": ["id", "title"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "founder_profile": {
+      "description": "Founder and Executive Profile data",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Profile record ID"
+        }
+      },
+      "required": ["id"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "custom_orders": {
+      "description": "Custom solution project orders submitted by clients",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Order ID"
+        }
+      },
+      "required": ["id"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "enquiries": {
+      "description": "Contact and Demo enquiries from website visitors",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Enquiry ID"
+        }
+      },
+      "required": ["id"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    },
+    "work_applications": {
+      "description": "Job and Contributor applications submitted via Work With Us",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Application ID"
+        }
+      },
+      "required": ["id"],
+      "access": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      }
+    }
+  }
+}
