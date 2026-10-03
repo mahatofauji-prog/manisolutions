@@ -286,8 +286,9 @@ export const DigitalProductDetailPage: React.FC<DigitalProductDetailPageProps> =
                   customerPhone: custPhone,
                   timestamp: Date.now()
                 }));
+                sessionStorage.setItem('payment_session_auth_' + response.razorpay_payment_id, 'active_purchase_session_2026');
               } catch {}
-              window.location.href = `/thank-you?payment_id=${response.razorpay_payment_id}&order_id=${data.internalOrderId}&product_id=${product.id}&amount=${verifiedPaidAmount}&customer_email=${encodeURIComponent(custEmail)}&customer_name=${encodeURIComponent(custName)}`;
+              window.location.href = `/thank-you?payment_id=${response.razorpay_payment_id}&order_id=${data.internalOrderId}&product_id=${product.id}&amount=${verifiedPaidAmount}`;
             } else {
               setErrorMessage('Payment signature verification failed.');
               setIsProcessing(false);
@@ -359,8 +360,9 @@ export const DigitalProductDetailPage: React.FC<DigitalProductDetailPageProps> =
             customerPhone: custPhone,
             timestamp: Date.now()
           }));
+          sessionStorage.setItem('payment_session_auth_UPI_UTR_' + cleanUtr, 'active_purchase_session_2026');
         } catch {}
-        window.location.href = `/thank-you?payment_id=UPI_UTR_${encodeURIComponent(cleanUtr)}&order_id=${data.order.id}&product_id=${product.id}&amount=${authoritativePrice}&customer_email=${encodeURIComponent(custEmail)}&customer_name=${encodeURIComponent(custName || 'Valued Customer')}`;
+        window.location.href = `/thank-you?payment_id=UPI_UTR_${encodeURIComponent(cleanUtr)}&order_id=${data.order.id}&product_id=${product.id}&amount=${authoritativePrice}`;
       } else {
         setErrorMessage(data.message || 'Verification could not be completed. Please contact WhatsApp support.');
         setIsVerifyingUtr(false);

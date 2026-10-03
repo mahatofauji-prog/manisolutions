@@ -600,9 +600,34 @@ async function startServer() {
       } catch {}
 
       const stats = fs.statSync(finalFilePath);
+      const fileBuffer = fs.readFileSync(finalFilePath);
+      const base64Data = 'base64:' + fileBuffer.toString('base64');
+
+      // Clean up temporary compiled file from ephemeral disk immediately
+      try {
+        fs.unlinkSync(finalFilePath);
+      } catch {}
+
+      // Directly update digital_products table in Supabase
+      if (productId) {
+        try {
+          await supabase
+            .from('digital_products')
+            .update({
+              product_file_path: base64Data,
+              product_file_name: originalName,
+              product_file_size: formatBytes(stats.size),
+              product_file_type: ext,
+              product_file_uploaded_at: new Date().toISOString()
+            })
+            .eq('id', productId);
+        } catch (dbErr) {
+          console.warn('Direct Supabase write during finalization notice:', dbErr);
+        }
+      }
 
       logSecurityEvent('PRODUCT_FILE_FINALIZATION_SUCCESS', {
-        filename: finalFileName,
+        filename: 'base64_encoded_payload',
         fileName: cleanName,
         size: stats.size,
         productId: productId || 'UNASSIGNED'
@@ -611,7 +636,7 @@ async function startServer() {
       return res.json({
         success: true,
         message: 'Digital product asset file uploaded and finalized successfully.',
-        filePath: finalFileName,
+        filePath: base64Data,
         fileName: originalName,
         fileSize: formatBytes(stats.size),
         fileSizeBytes: stats.size,
@@ -1871,6 +1896,24 @@ ${JSON.stringify({
           if (pDataArr && pDataArr.length > 0) {
             const pData = pDataArr[0];
             if (pData?.product_file_path) {
+              if (pData.product_file_path.startsWith('base64:')) {
+                const base64Content = pData.product_file_path.substring(7);
+                const buf = Buffer.from(base64Content, 'base64');
+                const tName = targetFileName || pData.product_file_name || 'download.pdf';
+                const ext = path.extname(tName).toLowerCase();
+                let contentType = 'application/octet-stream';
+                if (ext === '.pdf') contentType = 'application/pdf';
+                else if (ext === '.apk') contentType = 'application/vnd.android.package-archive';
+                else if (ext === '.zip') contentType = 'application/zip';
+                else if (ext === '.html') contentType = 'text/html';
+
+                res.setHeader('Content-Type', contentType);
+                res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(tName)}"`);
+                res.setHeader('Content-Length', buf.length);
+                logSecurityEvent('DOWNLOAD_ACCESS_GRANTED_BASE64', { customerId, productId, size: buf.length });
+                return res.send(buf);
+              }
+
               const safe = path.basename(pData.product_file_path);
               const cand = path.join(PROTECTED_UPLOADS_DIR, safe);
               if (fs.existsSync(cand) && fs.statSync(cand).size > 0) {

@@ -28,6 +28,34 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
   const [order, setOrder] = useState<DigitalOrder | null>(null);
   const [downloadToken, setDownloadToken] = useState<string>('');
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSessionVerified, setIsSessionVerified] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [verificationError, setVerificationError] = useState('');
+
+  const handleVerifyEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!order) return;
+    const orderEmail = (order.customerEmail || (order as any).customer_email || '').trim().toLowerCase();
+    const typedEmail = verificationEmail.trim().toLowerCase();
+
+    if (typedEmail === orderEmail) {
+      const pId = order.paymentId || new URLSearchParams(window.location.search).get('payment_id');
+      if (pId) {
+        sessionStorage.setItem('payment_session_auth_' + pId, 'active_purchase_session_2026');
+        localStorage.setItem('payment_session_auth_' + pId, 'active_purchase_session_2026');
+      }
+      setIsSessionVerified(true);
+      setVerificationError('');
+      // Log them in to the client session
+      digitalProductsStorage.setCurrentCustomer({
+        email: order.customerEmail,
+        name: order.customerName,
+        phone: order.customerPhone || ''
+      });
+    } else {
+      setVerificationError('❌ Verification Failed: The email address does not match the registered purchaser.');
+    }
+  };
 
   useEffect(() => {
     const verifyPurchase = async () => {
@@ -105,12 +133,23 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
           // Save order and access record permanently into local & Firestore state
           await digitalProductsStorage.recordOrder(data.order);
 
-          // Save current customer session
-          digitalProductsStorage.setCurrentCustomer({
-            email: data.order.customerEmail,
-            name: data.order.customerName,
-            phone: data.order.customerPhone
-          });
+          const pId = paymentId || data.order.paymentId;
+          const isSessionAuth = 
+            sessionStorage.getItem('payment_session_auth_' + pId) === 'active_purchase_session_2026' ||
+            localStorage.getItem('payment_session_auth_' + pId) === 'active_purchase_session_2026' ||
+            (storedOrder && storedOrder.paymentId === pId);
+
+          if (isSessionAuth) {
+            setIsSessionVerified(true);
+            // Save current customer session
+            digitalProductsStorage.setCurrentCustomer({
+              email: data.order.customerEmail,
+              name: data.order.customerName,
+              phone: data.order.customerPhone || ''
+            });
+          } else {
+            setIsSessionVerified(false);
+          }
 
           setIsVerified(true);
         } else {
@@ -255,116 +294,168 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
             </div>
 
             {/* Order & Product Details Section */}
-            <div className="p-6 sm:p-10 space-y-8">
-              
-              {/* Product Card Box */}
-              <div className="p-5 rounded-2xl bg-slate-50 border border-[#E4E1DA] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <img
-                    src={product.thumbnailUrl || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop'}
-                    alt={product.name}
-                    className="w-16 h-16 rounded-xl object-cover border border-[#E4E1DA] shrink-0"
-                  />
-                  <div className="space-y-0.5">
-                    <span className="text-[10px] font-extrabold uppercase text-[#C79A22] bg-[#C79A22]/10 px-2 py-0.5 rounded">
-                      {product.category}
-                    </span>
-                    <h3 className="text-sm sm:text-base font-black text-[#171A1F]">
-                      {product.name}
-                    </h3>
-                    <span className="text-xs text-[#626873]">
-                      Format: {product.productFileType || 'PDF / Digital Package'}
+            {!isSessionVerified ? (
+              <div className="p-6 sm:p-10 space-y-6">
+                <div className="p-6 rounded-2xl bg-amber-50/70 border-2 border-amber-500/30 text-center space-y-4 max-w-lg mx-auto">
+                  <div className="w-12 h-12 bg-amber-100 text-amber-700 rounded-2xl flex items-center justify-center mx-auto shadow-sm">
+                    <Lock className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1.5">
+                    <h3 className="text-base sm:text-lg font-black text-[#171A1F]">🔒 Secure Link Sharing Protection</h3>
+                    <p className="text-xs text-[#626873] leading-relaxed">
+                      To prevent unauthorized downloads via public link sharing, this thank-you page is locked. 
+                      Please enter the registered email address used during purchase to verify ownership and unlock download access.
+                    </p>
+                  </div>
+                  
+                  <form onSubmit={handleVerifyEmailSubmit} className="space-y-3.5 text-left text-xs max-w-sm mx-auto">
+                    <div>
+                      <label className="block text-[#171A1F] font-bold mb-1.5 text-center">Registered Email Address</label>
+                      <input
+                        type="email"
+                        required
+                        placeholder="your-email@domain.com"
+                        value={verificationEmail}
+                        onChange={(e) => setVerificationEmail(e.target.value)}
+                        className="w-full px-3.5 py-3 rounded-xl bg-white border border-[#E4E1DA] focus:border-[#C79A22] text-[#171A1F] font-semibold text-center text-sm shadow-inner focus:outline-none"
+                      />
+                    </div>
+                    {verificationError && (
+                      <p className="text-rose-600 text-xs font-bold text-center leading-relaxed">
+                        {verificationError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 rounded-xl bg-[#171A1F] hover:bg-black text-white text-xs font-black shadow-md uppercase tracking-wider transition-all"
+                    >
+                      Verify Ownership & Unlock
+                    </button>
+                  </form>
+                </div>
+
+                {/* Back to Homepage Button */}
+                <div className="flex justify-center pt-4 border-t border-[#E4E1DA]">
+                  <button
+                    onClick={onNavigateHome}
+                    className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#171A1F] text-xs font-bold transition-all"
+                  >
+                    Back to Store Homepage
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 sm:p-10 space-y-8">
+                
+                {/* Product Card Box */}
+                <div className="p-5 rounded-2xl bg-slate-50 border border-[#E4E1DA] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={product.thumbnailUrl || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop'}
+                      alt={product.name}
+                      className="w-16 h-16 rounded-xl object-cover border border-[#E4E1DA] shrink-0"
+                    />
+                    <div className="space-y-0.5">
+                      <span className="text-[10px] font-extrabold uppercase text-[#C79A22] bg-[#C79A22]/10 px-2 py-0.5 rounded">
+                        {product.category}
+                      </span>
+                      <h3 className="text-sm sm:text-base font-black text-[#171A1F]">
+                        {product.name}
+                      </h3>
+                      <span className="text-xs text-[#626873]">
+                        Format: {product.productFileType || 'PDF / Digital Package'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="sm:text-right">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">Amount Paid</span>
+                    <span className="text-lg sm:text-xl font-black text-emerald-700">
+                      ₹{Number(order?.totalAmount || (order as any)?.total_amount || 0).toLocaleString('en-IN')}
                     </span>
                   </div>
                 </div>
 
-                <div className="sm:text-right">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">Amount Paid</span>
-                  <span className="text-lg sm:text-xl font-black text-emerald-700">
-                    ₹{Number(order?.totalAmount || (order as any)?.total_amount || 0).toLocaleString('en-IN')}
-                  </span>
-                </div>
-              </div>
-
-              {/* Order Metadata Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Order ID</span>
-                  <span className="font-mono font-bold text-[#2563EB]">{order?.id}</span>
-                </div>
-
-                <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Customer</span>
-                  <span className="font-bold text-[#171A1F] truncate block">{order?.customerName || (order as any)?.customer_name || 'Valued Customer'}</span>
-                </div>
-
-                <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1 col-span-2 sm:col-span-1">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Payment Status</span>
-                  <span className="font-bold text-emerald-700 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Verified & Paid
-                  </span>
-                </div>
-              </div>
-
-              {/* Secure Download CTA */}
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/40 border-2 border-[#C79A22]/40 text-center space-y-4">
-                <div className="space-y-1">
-                  <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C79A22] uppercase tracking-wider">
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>Protected Digital Download</span>
+                {/* Order Metadata Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+                  <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Order ID</span>
+                    <span className="font-mono font-bold text-[#2563EB]">{order?.id}</span>
                   </div>
-                  <h4 className="text-base sm:text-lg font-black text-[#171A1F]">
-                    📧 Your Download Access Is Ready
-                  </h4>
-                  <p className="text-xs text-[#626873] max-w-md mx-auto">
-                    Click the button below to download your complete E-book / digital product files immediately.
+
+                  <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Customer</span>
+                    <span className="font-bold text-[#171A1F] truncate block">{order?.customerName || (order as any)?.customer_name || 'Valued Customer'}</span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1 col-span-2 sm:col-span-1">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Payment Status</span>
+                    <span className="font-bold text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Verified & Paid
+                    </span>
+                  </div>
+                </div>
+
+                {/* Secure Download CTA */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50/40 border-2 border-[#C79A22]/40 text-center space-y-4">
+                  <div className="space-y-1">
+                    <div className="inline-flex items-center gap-1.5 text-xs font-extrabold text-[#C79A22] uppercase tracking-wider">
+                      <Lock className="w-3.5 h-3.5" />
+                      <span>Protected Digital Download</span>
+                    </div>
+                    <h4 className="text-base sm:text-lg font-black text-[#171A1F]">
+                      📧 Your Download Access Is Ready
+                    </h4>
+                    <p className="text-xs text-[#626873] max-w-md mx-auto">
+                      Click the button below to download your complete E-book / digital product files immediately.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#C79A22] hover:bg-[#B38A1E] text-[#171A1F] text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mx-auto"
+                  >
+                    <Download className="w-5 h-5" />
+                    <span>{isDownloading ? 'Preparing Secure File...' : 'DOWNLOAD E-BOOK / ASSET'}</span>
+                  </button>
+
+                  <p className="text-[11px] text-slate-500 font-medium pt-1">
+                    🔒 Your download link is secure and intended exclusively for the purchaser ({order?.customerEmail || (order as any)?.customer_email || ''}).
                   </p>
                 </div>
 
-                <button
-                  onClick={handleDownload}
-                  disabled={isDownloading}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#C79A22] hover:bg-[#B38A1E] text-[#171A1F] text-sm font-black shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mx-auto"
-                >
-                  <Download className="w-5 h-5" />
-                  <span>{isDownloading ? 'Preparing Secure File...' : 'DOWNLOAD E-BOOK / ASSET'}</span>
-                </button>
-
-                <p className="text-[11px] text-slate-500 font-medium pt-1">
-                  🔒 Your download link is secure and intended exclusively for the purchaser ({order?.customerEmail || (order as any)?.customer_email || ''}).
-                </p>
-              </div>
-
-              {/* Trust Information */}
-              <div className="p-4 rounded-2xl border border-[#E4E1DA] bg-slate-50 text-xs text-[#626873] space-y-2">
-                <div className="flex items-center gap-2 font-bold text-[#171A1F]">
-                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                  <span>MANI Solution Digital Guarantee</span>
+                {/* Trust Information */}
+                <div className="p-4 rounded-2xl border border-[#E4E1DA] bg-slate-50 text-xs text-[#626873] space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-[#171A1F]">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span>MANI Solution Digital Guarantee</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed">
+                    You can access and re-download your purchased assets anytime through the MANI Solution Customer Portal using your registered email: <strong>{order?.customerEmail || (order as any)?.customer_email || ''}</strong>.
+                  </p>
                 </div>
-                <p className="text-[11px] leading-relaxed">
-                  You can access and re-download your purchased assets anytime through the MANI Solution Customer Portal using your registered email: <strong>{order?.customerEmail || (order as any)?.customer_email || ''}</strong>.
-                </p>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#E4E1DA]">
+                  <button
+                    onClick={onNavigateStore}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#171A1F] text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <ShoppingBag className="w-4 h-4 text-[#C79A22]" />
+                    <span>Continue Browsing Store</span>
+                  </button>
+
+                  <button
+                    onClick={onNavigateHome}
+                    className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#171A1F] hover:bg-black text-white text-xs font-bold transition-all"
+                  >
+                    Back to Homepage
+                  </button>
+                </div>
+
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-[#E4E1DA]">
-                <button
-                  onClick={onNavigateStore}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[#171A1F] text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-                >
-                  <ShoppingBag className="w-4 h-4 text-[#C79A22]" />
-                  <span>Continue Browsing Store</span>
-                </button>
-
-                <button
-                  onClick={onNavigateHome}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#171A1F] hover:bg-black text-white text-xs font-bold transition-all"
-                >
-                  Back to Homepage
-                </button>
-              </div>
-
-            </div>
+            )}
 
           </div>
         )}

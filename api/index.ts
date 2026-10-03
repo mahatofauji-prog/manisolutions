@@ -857,11 +857,36 @@ app.post(['/api/digital/finalize-upload', '/api/digital/finalize-upload/'], asyn
     } catch {}
 
     const stats = fs.statSync(finalFilePath);
+    const fileBuffer = fs.readFileSync(finalFilePath);
+    const base64Data = 'base64:' + fileBuffer.toString('base64');
+
+    // Clean up temporary compiled file from ephemeral disk immediately
+    try {
+      fs.unlinkSync(finalFilePath);
+    } catch {}
+
+    // Directly update digital_products table in Supabase
+    if (productId) {
+      try {
+        await supabase
+          .from('digital_products')
+          .update({
+            product_file_path: base64Data,
+            product_file_name: originalName,
+            product_file_size: formatBytesApi(stats.size),
+            product_file_type: ext,
+            product_file_uploaded_at: new Date().toISOString()
+          })
+          .eq('id', productId);
+      } catch (dbErr) {
+        console.warn('Direct Supabase write during finalization notice:', dbErr);
+      }
+    }
 
     return res.json({
       success: true,
       message: 'Digital product asset file uploaded and finalized successfully.',
-      filePath: finalFileName,
+      filePath: base64Data,
       fileName: originalName,
       fileSize: formatBytesApi(stats.size),
       fileSizeBytes: stats.size,
@@ -969,6 +994,23 @@ app.get('/api/digital/download', async (req, res) => {
         if (pDataArr && pDataArr.length > 0) {
           const pData = pDataArr[0];
           if (pData?.product_file_path) {
+            if (pData.product_file_path.startsWith('base64:')) {
+              const base64Content = pData.product_file_path.substring(7);
+              const buf = Buffer.from(base64Content, 'base64');
+              const tName = targetFileName || pData.product_file_name || 'download.pdf';
+              const ext = path.extname(tName).toLowerCase();
+              let contentType = 'application/octet-stream';
+              if (ext === '.pdf') contentType = 'application/pdf';
+              else if (ext === '.apk') contentType = 'application/vnd.android.package-archive';
+              else if (ext === '.zip') contentType = 'application/zip';
+              else if (ext === '.html') contentType = 'text/html';
+
+              res.setHeader('Content-Type', contentType);
+              res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(tName)}"`);
+              res.setHeader('Content-Length', buf.length);
+              return res.send(buf);
+            }
+
             const safe = path.basename(pData.product_file_path);
             for (const dir of candidateDirs) {
               const cand = path.join(dir, safe);
