@@ -1,0 +1,13 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+logs/
+protected_uploads/
+test.pdf
+.env*
+!.env.example
+file_*
+
