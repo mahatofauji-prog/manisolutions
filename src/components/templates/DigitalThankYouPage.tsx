@@ -281,7 +281,7 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
                 <div className="sm:text-right">
                   <span className="text-[10px] text-slate-400 font-bold uppercase block">Amount Paid</span>
                   <span className="text-lg sm:text-xl font-black text-emerald-700">
-                    ₹{order.totalAmount.toLocaleString('en-IN')}
+                    ₹{Number(order?.totalAmount || (order as any)?.total_amount || 0).toLocaleString('en-IN')}
                   </span>
                 </div>
               </div>
@@ -290,12 +290,12 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                 <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Order ID</span>
-                  <span className="font-mono font-bold text-[#2563EB]">{order.id}</span>
+                  <span className="font-mono font-bold text-[#2563EB]">{order?.id}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1">
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Customer</span>
-                  <span className="font-bold text-[#171A1F] truncate block">{order.customerName}</span>
+                  <span className="font-bold text-[#171A1F] truncate block">{order?.customerName || (order as any)?.customer_name || 'Valued Customer'}</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl border border-[#E4E1DA] bg-white space-y-1 col-span-2 sm:col-span-1">
@@ -331,7 +331,7 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
                 </button>
 
                 <p className="text-[11px] text-slate-500 font-medium pt-1">
-                  🔒 Your download link is secure and intended exclusively for the purchaser ({order.customerEmail}).
+                  🔒 Your download link is secure and intended exclusively for the purchaser ({order?.customerEmail || (order as any)?.customer_email || ''}).
                 </p>
               </div>
 
@@ -342,7 +342,7 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
                   <span>MANI Solution Digital Guarantee</span>
                 </div>
                 <p className="text-[11px] leading-relaxed">
-                  You can access and re-download your purchased assets anytime through the MANI Solution Customer Portal using your registered email: <strong>{order.customerEmail}</strong>.
+                  You can access and re-download your purchased assets anytime through the MANI Solution Customer Portal using your registered email: <strong>{order?.customerEmail || (order as any)?.customer_email || ''}</strong>.
                 </p>
               </div>
 

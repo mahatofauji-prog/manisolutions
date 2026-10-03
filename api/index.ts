@@ -431,7 +431,21 @@ app.post('/api/digital/payment/verify-purchase', async (req, res) => {
           .eq('id', finalOrderId)
           .single();
         if (existingOrder && Number(existingOrder.total_amount) > 0) {
-          confirmedOrder = existingOrder;
+          confirmedOrder = {
+            id: existingOrder.id,
+            customerId: existingOrder.customer_id,
+            customerName: existingOrder.customer_name || 'Valued Customer',
+            customerEmail: existingOrder.customer_email || 'customer@manisolutions.com',
+            customerPhone: existingOrder.customer_phone || '',
+            items: existingOrder.items || [],
+            subtotal: Number(existingOrder.total_amount),
+            discount: 0,
+            totalAmount: Number(existingOrder.total_amount),
+            paymentId: existingOrder.razorpay_payment_id || `pay_${crypto.randomBytes(6).toString('hex')}`,
+            paymentStatus: existingOrder.payment_status || 'Paid',
+            accessStatus: existingOrder.access_status || 'Active',
+            createdAt: existingOrder.created_at || new Date().toISOString()
+          };
         }
       } catch (dbErr) {
         console.warn('Supabase existing order check error:', dbErr);
