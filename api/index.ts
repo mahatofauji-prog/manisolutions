@@ -751,9 +751,20 @@ app.post(['/api/digital/finalize-upload', '/api/digital/finalize-upload/'], asyn
 
   try {
     const { uploadId, fileName, totalChunks, productId, filePath } = req.body || {};
-    const protectedDir = path.join(process.cwd(), 'protected_uploads', 'digital_products');
-    if (!fs.existsSync(protectedDir)) {
-      fs.mkdirSync(protectedDir, { recursive: true });
+    let protectedDir = path.join(process.cwd(), 'protected_uploads', 'digital_products');
+    try {
+      if (!fs.existsSync(protectedDir)) {
+        fs.mkdirSync(protectedDir, { recursive: true });
+      }
+      const testFile = path.join(protectedDir, '.write_test');
+      fs.writeFileSync(testFile, '1');
+      fs.unlinkSync(testFile);
+    } catch (e) {
+      console.warn(`Directory ${protectedDir} is not writable. Using OS temp fallback.`);
+      protectedDir = path.join(os.tmpdir(), 'protected_uploads', 'digital_products');
+      if (!fs.existsSync(protectedDir)) {
+        fs.mkdirSync(protectedDir, { recursive: true });
+      }
     }
 
     if (filePath && typeof filePath === 'string' && !uploadId) {

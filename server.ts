@@ -39,19 +39,34 @@ const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://gyxhbcowrhubfsoqjt
 const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_tcvoR4pkbdw0WFvHi6oMBg_UeVbFxgz';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const PUBLIC_UPLOADS_DIR = path.join(__dirname, 'public', 'uploads');
-const PROTECTED_UPLOADS_DIR = path.join(__dirname, 'protected_uploads', 'digital_products');
-const SECURITY_LOGS_DIR = path.join(__dirname, 'logs');
+const PUBLIC_UPLOADS_DIR_DEFAULT = path.join(__dirname, 'public', 'uploads');
+const PROTECTED_UPLOADS_DIR_DEFAULT = path.join(__dirname, 'protected_uploads', 'digital_products');
+const SECURITY_LOGS_DIR_DEFAULT = path.join(__dirname, 'logs');
 
-if (!fs.existsSync(PUBLIC_UPLOADS_DIR)) {
-  fs.mkdirSync(PUBLIC_UPLOADS_DIR, { recursive: true });
+function getValidWritableDir(defaultDir: string, fallbackDirName: string): string {
+  try {
+    if (!fs.existsSync(defaultDir)) {
+      fs.mkdirSync(defaultDir, { recursive: true });
+    }
+    const testFile = path.join(defaultDir, '.write_test');
+    fs.writeFileSync(testFile, '1');
+    fs.unlinkSync(testFile);
+    return defaultDir;
+  } catch (err) {
+    console.warn(`Directory ${defaultDir} is not writable. Falling back to temporary storage.`);
+    const tempFallback = path.join(os.tmpdir(), fallbackDirName);
+    try {
+      if (!fs.existsSync(tempFallback)) {
+        fs.mkdirSync(tempFallback, { recursive: true });
+      }
+    } catch {}
+    return tempFallback;
+  }
 }
-if (!fs.existsSync(PROTECTED_UPLOADS_DIR)) {
-  fs.mkdirSync(PROTECTED_UPLOADS_DIR, { recursive: true });
-}
-if (!fs.existsSync(SECURITY_LOGS_DIR)) {
-  fs.mkdirSync(SECURITY_LOGS_DIR, { recursive: true });
-}
+
+const PUBLIC_UPLOADS_DIR = getValidWritableDir(PUBLIC_UPLOADS_DIR_DEFAULT, 'public_uploads');
+const PROTECTED_UPLOADS_DIR = getValidWritableDir(PROTECTED_UPLOADS_DIR_DEFAULT, 'protected_uploads_digital_products');
+const SECURITY_LOGS_DIR = getValidWritableDir(SECURITY_LOGS_DIR_DEFAULT, 'logs');
 
 const SECURITY_LOG_FILE = path.join(SECURITY_LOGS_DIR, 'security_audit.log');
 
