@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MANI Solution - Small Business Management Software</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header Banner -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-xl no-print">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg border border-indigo-400">
+          <i class="fa-solid fa-cubes-stacked text-2xl text-white"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-extrabold tracking-tight">MANI <span class="text-indigo-400">Solution</span></h1>
+          <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Small Business Suite v3.2</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-xs bg-indigo-500/20 border border-indigo-400/40 px-3 py-1 rounded-full text-indigo-300 font-extrabold">
+          <i class="fa-solid fa-shield-halved mr-1.5"></i> Licensed & Verified Product
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Dashboard Grid -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-8 no-print">
+    
+    <!-- Welcome Notification -->
+    <div class="bg-indigo-50 border-l-4 border-indigo-600 p-5 rounded-r-2xl shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <h2 class="text-lg font-extrabold text-slate-900">🎉 Congratulations on Your Purchase!</h2>
+        <p class="text-xs text-slate-600">
+          You are using the fully licensed, offline-capable, standalone <strong>MANI Small Business Suite</strong>. 
+          Use the tabs below to manage your inventory, generate GST-compliant invoices, and track your daily sales on any device!
+        </p>
+      </div>
+      <button onclick="window.print()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black rounded-xl shadow-md transition-all shrink-0">
+        <i class="fa-solid fa-print mr-1.5"></i> PRINT REPORT
+      </button>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-xs text-slate-500 font-bold uppercase">Cash Balance</span>
+          <h3 class="text-2xl font-black text-emerald-700" id="stat-cash">₹45,280</h3>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-700 rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-wallet text-xl"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-xs text-slate-500 font-bold uppercase">Total Products</span>
+          <h3 class="text-2xl font-black text-indigo-900" id="stat-inventory-count">12 Items</h3>
+        </div>
+        <div class="w-12 h-12 bg-indigo-50 text-indigo-700 rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-boxes-stacked text-xl"></i>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <div class="space-y-1">
+          <span class="text-xs text-slate-500 font-bold uppercase">Generated Invoices</span>
+          <h3 class="text-2xl font-black text-blue-900" id="stat-invoice-count">5 Total</h3>
+        </div>
+        <div class="w-12 h-12 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-receipt text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tool Sections Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      
+      <!-- Box 1: Interactive Invoice Generator -->
+      <section class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white p-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice-dollar text-indigo-400 text-lg"></i>
+            <h3 class="font-extrabold text-base">GST Invoice Creator</h3>
+          </div>
+          <span class="text-[10px] bg-indigo-500/20 px-2 py-0.5 rounded font-black uppercase text-indigo-300">Fast Generator</span>
+        </div>
+        
+        <form id="invoice-form" onsubmit="generateInvoice(event)" class="p-6 space-y-4 text-xs flex-1">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Customer Name</label>
+              <input id="inv-cust-name" type="text" required placeholder="Hariom Mahato" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Customer Phone</label>
+              <input id="inv-cust-phone" type="text" placeholder="9876543210" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Select Product</label>
+              <select id="inv-product-select" onchange="loadProductPrice()" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50">
+                <option value="">-- Choose Item --</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-slate-600 font-bold mb-1">Unit Price (₹)</label>
+                <input id="inv-price" type="number" required placeholder="150" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+              </div>
+              <div>
+                <label class="block text-slate-600 font-bold mb-1">Qty</label>
+                <input id="inv-qty" type="number" required min="1" value="1" onchange="calculateTotals()" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 pt-2">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">GST Rate (%)</label>
+              <select id="inv-gst-rate" onchange="calculateTotals()" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50">
+                <option value="18">18% (Standard GST)</option>
+                <option value="12">12% (Reduced GST)</option>
+                <option value="5">5% (Essential GST)</option>
+                <option value="0">0% (Exempted)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Discount (₹)</label>
+              <input id="inv-discount" type="number" value="0" min="0" onchange="calculateTotals()" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+
+          <!-- Realtime Calculations -->
+          <div class="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 flex items-center justify-between text-indigo-950 font-bold">
+            <div>
+              <span class="text-[10px] text-slate-500 uppercase block">Total GST Included</span>
+              <span id="calc-gst" class="text-sm">₹27.00</span>
+            </div>
+            <div class="text-right">
+              <span class="text-[10px] text-slate-500 uppercase block">Grand Total Payable</span>
+              <span id="calc-payable" class="text-lg font-black text-indigo-900">₹177.00</span>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus"></i> GENERATE GST INVOICE
+          </button>
+        </form>
+      </section>
+
+      <!-- Box 2: Inventory Stock Manager -->
+      <section class="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden flex flex-col">
+        <div class="bg-slate-900 text-white p-6 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-box-open text-amber-500 text-lg"></i>
+            <h3 class="font-extrabold text-base">Realtime Inventory Tracker</h3>
+          </div>
+          <button onclick="toggleAddItemForm()" class="text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 px-3 py-1 rounded-lg font-black flex items-center gap-1">
+            <i class="fa-solid fa-plus"></i> ADD ITEM
+          </button>
+        </div>
+
+        <!-- Add Item Form (Hidden by default) -->
+        <div id="add-item-form-container" class="hidden p-6 border-b border-slate-100 bg-amber-50/20 space-y-4 text-xs">
+          <h4 class="font-extrabold text-amber-950">Add New Product to Catalog</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Item Name</label>
+              <input id="new-item-name" type="text" placeholder="Wired Keyboard v2" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Category</label>
+              <input id="new-item-cat" type="text" placeholder="Electronics" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Cost (₹)</label>
+              <input id="new-item-cost" type="number" placeholder="299" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Retail (₹)</label>
+              <input id="new-item-retail" type="number" placeholder="499" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Stock Qty</label>
+              <input id="new-item-qty" type="number" placeholder="45" class="w-full px-3 py-2 border border-slate-200 rounded-lg">
+            </div>
+          </div>
+          <button onclick="saveNewItem()" class="w-full py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl">
+            Save Item to Inventory
+          </button>
+        </div>
+
+        <!-- Inventory List Table -->
+        <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left text-slate-600">
+              <thead>
+                <tr class="border-b border-slate-200 text-slate-400 font-bold">
+                  <th class="py-2">Product Name</th>
+                  <th class="py-2">Category</th>
+                  <th class="py-2 text-right">Retail (₹)</th>
+                  <th class="py-2 text-center">Stock</th>
+                  <th class="py-2 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-tbody">
+                <!-- Injected via javascript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Active Invoice View (Last Generated) -->
+    <section class="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden" id="last-invoice-container">
+      <div class="p-6 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-receipt text-indigo-600 text-base"></i>
+          <h4 class="font-extrabold text-sm text-slate-900">Generated Invoice Preview</h4>
+        </div>
+        <button onclick="window.print()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1">
+          <i class="fa-solid fa-download"></i> EXPORT / PRINT
+        </button>
+      </div>
+
+      <div class="p-8 space-y-6" id="invoice-bill-print">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+          <div class="space-y-1">
+            <h5 class="text-base font-extrabold text-slate-900">INVOICE</h5>
+            <span class="text-xs text-indigo-600 font-bold font-mono" id="invoice-no">#INV-2026-005</span>
+            <p class="text-[10px] text-slate-400">Date: <span id="invoice-date">Oct 03, 2026</span></p>
+          </div>
+          <div class="text-right space-y-0.5">
+            <h6 class="text-xs font-black text-slate-900">MANI Solution Limited</h6>
+            <p class="text-[10px] text-slate-500">Ranchi, Jharkhand, India</p>
+            <p class="text-[10px] text-slate-500">Email: billing@manisolution.com</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 py-4 border-t border-b border-slate-100 text-[11px]">
+          <div>
+            <span class="text-[9px] text-slate-400 font-bold uppercase block">Billed To</span>
+            <strong id="invoice-billed-to" class="text-slate-900">Hariom Mahato</strong>
+            <p id="invoice-billed-phone" class="text-slate-500">9876543210</p>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] text-slate-400 font-bold uppercase block">Payment Status</span>
+            <span class="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
+              ✓ Fully Paid
+            </span>
+          </div>
+        </div>
+
+        <table class="w-full text-xs text-left text-slate-700">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-400 font-bold">
+              <th class="py-2">Item Description</th>
+              <th class="py-2 text-right">Price</th>
+              <th class="py-2 text-center">Qty</th>
+              <th class="py-2 text-right">GST %</th>
+              <th class="py-2 text-right">Discount</th>
+              <th class="py-2 text-right">Total Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-slate-100">
+              <td class="py-3 font-bold text-slate-900" id="inv-bill-item">Small Business Management Software</td>
+              <td class="py-3 text-right" id="inv-bill-price">₹150.00</td>
+              <td class="py-3 text-center" id="inv-bill-qty">1</td>
+              <td class="py-3 text-right" id="inv-bill-gst">18%</td>
+              <td class="py-3 text-right" id="inv-bill-discount">₹0.00</td>
+              <td class="py-3 text-right font-black text-slate-900" id="inv-bill-total">₹177.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="flex justify-end pt-4">
+          <div class="w-64 space-y-1.5 text-xs text-slate-600 font-medium">
+            <div class="flex justify-between">
+              <span>Subtotal:</span>
+              <span id="inv-bill-subtotal">₹150.00</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Total Tax (GST):</span>
+              <span id="inv-bill-totaltax">₹27.00</span>
+            </div>
+            <div class="flex justify-between text-indigo-900 font-black text-sm pt-2 border-t border-slate-100">
+              <span>Grand Total:</span>
+              <span id="inv-bill-payable">₹177.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PRINT ONLY BILL VIEW (For absolute layout safety) -->
+  <div class="hidden print-only max-w-2xl mx-auto p-12 bg-white text-slate-900 min-h-screen">
+    <!-- Same preview gets printed -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-500 py-6 text-center text-xs mt-auto border-t border-slate-800 no-print">
+    <p>© 2026 MANI Solution Limited. All Software Rights Reserved. रांची, झारखंड, भारत।</p>
+  </footer>
+
+  <script>
+    // Standard Pre-seeded Products
+    let items = [
+      { name: 'Small Business Management Software', category: 'Software', retail: 150, qty: 15, cost: 80 },
+      { name: 'Custom Inventory Tool', category: 'Software', retail: 299, qty: 120, cost: 120 },
+      { name: 'Digital Receipt Book', category: 'PDF Template', retail: 49, qty: 450, cost: 5 },
+      { name: 'GST Invoice Utility Sheet', category: 'Excel Tools', retail: 99, qty: 350, cost: 10 }
+    ];
+
+    let salesTotal = 45280;
+    let invoicesCount = 5;
+
+    function renderInventory() {
+      const tbody = document.getElementById('inventory-tbody');
+      tbody.innerHTML = '';
+      items.forEach((item, idx) => {
+        const isLow = item.qty < 20;
+        tbody.innerHTML += `
+          <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="py-2.5 font-bold text-slate-900">${item.name}</td>
+            <td class="py-2.5">${item.category}</td>
+            <td class="py-2.5 text-right font-semibold">₹${item.retail.toLocaleString('en-IN')}</td>
+            <td class="py-2.5 text-center font-mono ${isLow ? 'text-amber-600 font-bold' : 'text-slate-700'}">${item.qty} units</td>
+            <td class="py-2.5 text-center">
+              <span class="px-2 py-0.5 rounded text-[10px] font-black ${isLow ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}">
+                ${isLow ? 'LOW STOCK' : 'ACTIVE'}
+              </span>
+            </td>
+          </tr>
+        `;
+      });
+
+      // Update dropdown selector
+      const select = document.getElementById('inv-product-select');
+      select.innerHTML = '<option value="">-- Choose Item --</option>';
+      items.forEach(item => {
+        select.innerHTML += `<option value="${item.name}">${item.name} (₹${item.retail})</option>`;
+      });
+
+      // Update Top stats
+      document.getElementById('stat-inventory-count').innerText = `${items.length} Items`;
+      document.getElementById('stat-cash').innerText = `₹${salesTotal.toLocaleString('en-IN')}`;
+      document.getElementById('stat-invoice-count').innerText = `${invoicesCount} Total`;
+    }
+
+    function toggleAddItemForm() {
+      const form = document.getElementById('add-item-form-container');
+      form.classList.toggle('hidden');
+    }
+
+    function saveNewItem() {
+      const name = document.getElementById('new-item-name').value;
+      const cat = document.getElementById('new-item-cat').value || 'Tools';
+      const cost = Number(document.getElementById('new-item-cost').value) || 0;
+      const retail = Number(document.getElementById('new-item-retail').value) || 0;
+      const qty = Number(document.getElementById('new-item-qty').value) || 0;
+
+      if (!name) {
+        alert('Please enter a product name!');
+        return;
+      }
+
+      items.push({ name, category: cat, cost, retail, qty });
+      
+      // Clean inputs
+      document.getElementById('new-item-name').value = '';
+      document.getElementById('new-item-cat').value = '';
+      document.getElementById('new-item-cost').value = '';
+      document.getElementById('new-item-retail').value = '';
+      document.getElementById('new-item-qty').value = '';
+
+      toggleAddItemForm();
+      renderInventory();
+    }
+
+    function loadProductPrice() {
+      const selectedName = document.getElementById('inv-product-select').value;
+      const found = items.find(item => item.name === selectedName);
+      if (found) {
+        document.getElementById('inv-price').value = found.retail;
+        calculateTotals();
+      }
+    }
+
+    function calculateTotals() {
+      const price = Number(document.getElementById('inv-price').value) || 0;
+      const qty = Number(document.getElementById('inv-qty').value) || 1;
+      const gstRate = Number(document.getElementById('inv-gst-rate').value) || 18;
+      const discount = Number(document.getElementById('inv-discount').value) || 0;
+
+      const subtotal = Math.max(0, (price * qty) - discount);
+      const gstTax = subtotal * (gstRate / 100);
+      const payable = subtotal + gstTax;
+
+      document.getElementById('calc-gst').innerText = `₹${gstTax.toFixed(2)}`;
+      document.getElementById('calc-payable').innerText = `₹${payable.toFixed(2)}`;
+    }
+
+    function generateInvoice(event) {
+      event.preventDefault();
+      const custName = document.getElementById('inv-cust-name').value;
+      const custPhone = document.getElementById('inv-cust-phone').value || 'N/A';
+      const prodName = document.getElementById('inv-product-select').value || 'Custom Business Service';
+      const price = Number(document.getElementById('inv-price').value) || 0;
+      const qty = Number(document.getElementById('inv-qty').value) || 1;
+      const gstRate = Number(document.getElementById('inv-gst-rate').value) || 18;
+      const discount = Number(document.getElementById('inv-discount').value) || 0;
+
+      const subtotal = Math.max(0, (price * qty) - discount);
+      const gstTax = subtotal * (gstRate / 100);
+      const payable = subtotal + gstTax;
+
+      // Update Sales figures
+      salesTotal += payable;
+      invoicesCount += 1;
+
+      // Generate invoice number
+      const invNo = `#INV-2026-00${invoicesCount}`;
+
+      // Injected to preview table
+      document.getElementById('invoice-no').innerText = invNo;
+      document.getElementById('invoice-date').innerText = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+      document.getElementById('invoice-billed-to').innerText = custName;
+      document.getElementById('invoice-billed-phone').innerText = custPhone;
+      document.getElementById('inv-bill-item').innerText = prodName;
+      document.getElementById('inv-bill-price').innerText = `₹${price.toFixed(2)}`;
+      document.getElementById('inv-bill-qty').innerText = qty;
+      document.getElementById('inv-bill-gst').innerText = `${gstRate}%`;
+      document.getElementById('inv-bill-discount').innerText = `₹${discount.toFixed(2)}`;
+      document.getElementById('inv-bill-total').innerText = `₹${payable.toFixed(2)}`;
+
+      document.getElementById('inv-bill-subtotal').innerText = `₹${(price * qty).toFixed(2)}`;
+      document.getElementById('inv-bill-totaltax').innerText = `₹${gstTax.toFixed(2)}`;
+      document.getElementById('inv-bill-payable').innerText = `₹${payable.toFixed(2)}`;
+
+      // Decrement Inventory quantity
+      const found = items.find(item => item.name === prodName);
+      if (found) {
+        found.qty = Math.max(0, found.qty - qty);
+      }
+
+      renderInventory();
+
+      // Clean Form fields
+      document.getElementById('inv-cust-name').value = '';
+      document.getElementById('inv-cust-phone').value = '';
+      document.getElementById('inv-qty').value = '1';
+      document.getElementById('inv-discount').value = '0';
+
+      document.getElementById('last-invoice-container').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Initialize Page
+    renderInventory();
+  </script>
+</body>
+</html>
