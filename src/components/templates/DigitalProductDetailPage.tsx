@@ -274,6 +274,19 @@ export const DigitalProductDetailPage: React.FC<DigitalProductDetailPageProps> =
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
               const verifiedPaidAmount = verifyData.order?.totalAmount || data.amount || product.price;
+              try {
+                localStorage.setItem('last_completed_order', JSON.stringify({
+                  paymentId: response.razorpay_payment_id,
+                  orderId: data.internalOrderId,
+                  productId: product.id,
+                  productName: product.name,
+                  amount: verifiedPaidAmount,
+                  customerEmail: custEmail,
+                  customerName: custName,
+                  customerPhone: custPhone,
+                  timestamp: Date.now()
+                }));
+              } catch {}
               window.location.href = `/thank-you?payment_id=${response.razorpay_payment_id}&order_id=${data.internalOrderId}&product_id=${product.id}&amount=${verifiedPaidAmount}&customer_email=${encodeURIComponent(custEmail)}&customer_name=${encodeURIComponent(custName)}`;
             } else {
               setErrorMessage('Payment signature verification failed.');
@@ -334,6 +347,19 @@ export const DigitalProductDetailPage: React.FC<DigitalProductDetailPageProps> =
       });
       const data = await res.json();
       if (data.success && data.order) {
+        try {
+          localStorage.setItem('last_completed_order', JSON.stringify({
+            paymentId: `UPI_UTR_${cleanUtr}`,
+            orderId: data.order.id,
+            productId: product.id,
+            productName: product.name,
+            amount: authoritativePrice,
+            customerEmail: custEmail,
+            customerName: custName || 'Valued Customer',
+            customerPhone: custPhone,
+            timestamp: Date.now()
+          }));
+        } catch {}
         window.location.href = `/thank-you?payment_id=UPI_UTR_${encodeURIComponent(cleanUtr)}&order_id=${data.order.id}&product_id=${product.id}&amount=${authoritativePrice}&customer_email=${encodeURIComponent(custEmail)}&customer_name=${encodeURIComponent(custName || 'Valued Customer')}`;
       } else {
         setErrorMessage(data.message || 'Verification could not be completed. Please contact WhatsApp support.');

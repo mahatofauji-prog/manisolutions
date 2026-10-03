@@ -126,6 +126,7 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
   const [productUploadStage, setProductUploadStage] = useState<UploadStage>('idle');
   const [productFileUploadProgress, setProductFileUploadProgress] = useState(0);
   const [productUploadStatusText, setProductUploadStatusText] = useState('');
+  const [selectedFileToUpload, setSelectedFileToUpload] = useState<File | null>(null);
   const productXhrRef = useRef<XMLHttpRequest | null>(null);
 
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -462,9 +463,77 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
     setGalleryImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  // Product File Upload Handler (Chunked Direct Stream Upload - Bypasses Serverless Request Size Limits)
+  // Helper for single chunk XHR upload with progress and timeout
+  const uploadSingleChunkWithXhr = (
+    url: string,
+    formData: FormData,
+    onProgress: (loaded: number, total: number) => void,
+    timeoutMs = 60000
+  ): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      productXhrRef.current = xhr;
+      xhr.open('POST', url, true);
+      xhr.timeout = timeoutMs;
+
+      xhr.upload.onprogress = (evt) => {
+        if (evt.lengthComputable && evt.total > 0) {
+          onProgress(evt.loaded, evt.total);
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            resolve(res);
+          } catch {
+            resolve({ success: true });
+          }
+        } else {
+          let errMsg = `Server error (${xhr.status})`;
+          try {
+            const errRes = JSON.parse(xhr.responseText);
+            if (errRes.message) errMsg = errRes.message;
+          } catch {}
+          reject(new Error(errMsg));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error('Network connection error during chunk upload. Please check connectivity.'));
+      xhr.ontimeout = () => reject(new Error(`Chunk upload timed out after ${Math.round(timeoutMs / 1000)} seconds.`));
+      xhr.onabort = () => reject(new Error('Chunk upload was cancelled.'));
+
+      xhr.send(formData);
+    });
+  };
+
+  // Helper for chunk upload retry logic
+  const uploadChunkWithRetry = async (
+    url: string,
+    formData: FormData,
+    onChunkProgress: (loaded: number, total: number) => void,
+    maxRetries = 3
+  ) => {
+    let lastErr: any = null;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await uploadSingleChunkWithXhr(url, formData, onChunkProgress, 60000);
+      } catch (err: any) {
+        lastErr = err;
+        console.warn(`[Chunk Upload] Attempt ${attempt}/${maxRetries} failed:`, err.message);
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+    }
+    throw new Error(lastErr?.message || `Chunk upload failed after ${maxRetries} attempts.`);
+  };
+
+  // Product File Upload Handler (Chunked Direct Stream Upload with XHR Progress & Retries)
   const uploadProductFile = async (file: File) => {
     if (!file) return;
+    setSelectedFileToUpload(file);
 
     const targetProdId = editingProduct?.id || 'DP-PENDING-' + Date.now();
     setFormError('');
@@ -472,7 +541,7 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
     setProductFileUploadProgress(0);
     setProductUploadStatusText('Preparing secure direct upload...');
 
-    const CHUNK_SIZE = 2 * 1024 * 1024; // 2 MB per chunk to stay well under serverless payload limits
+    const CHUNK_SIZE = 1 * 1024 * 1024; // 1 MB per chunk (production safe, well under serverless 4.5MB payload limit)
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     const uploadId = `up_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
@@ -502,21 +571,23 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
           productId: targetProdId
         }).toString();
 
-        const res = await fetch(`/api/digital/upload-chunk?${qParams}`, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.message || `Server error (${res.status}) during chunk upload.`);
-        }
-
-        const percent = Math.round(((chunkIndex + 1) / totalChunks) * 100);
-        setProductFileUploadProgress(percent);
+        await uploadChunkWithRetry(
+          `/api/digital/upload-chunk?${qParams}`,
+          formData,
+          (loaded, total) => {
+            const currentChunkBytes = loaded;
+            const previousChunksBytes = start;
+            const overallBytes = previousChunksBytes + currentChunkBytes;
+            const percent = Math.min(98, Math.round((overallBytes / file.size) * 100));
+            setProductFileUploadProgress(percent);
+            const chunkPct = Math.round((loaded / total) * 100);
+            setProductUploadStatusText(`Uploading file chunk ${chunkIndex + 1} of ${totalChunks} (${chunkPct}%)...`);
+          }
+        );
       }
 
       setProductUploadStatusText('Finalizing and verifying digital asset...');
+      setProductFileUploadProgress(99);
 
       // Finalize upload request
       const finalizeRes = await fetch('/api/digital/finalize-upload', {
@@ -542,6 +613,7 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
         setProductFileSize(finalData.fileSize || '');
         setProductFileType(finalData.fileType || '');
         setProductFileUploadedAt(finalData.uploadedAt || new Date().toISOString());
+        setProductFileUploadProgress(100);
         setProductUploadStage('completed');
         setProductUploadStatusText('File uploaded securely!');
         showToast('Digital asset uploaded successfully.');
@@ -549,10 +621,13 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
         throw new Error(finalData.message || 'Failed to finalize uploaded file.');
       }
     } catch (err: any) {
-      console.error('File upload error:', err);
+      console.error('[Digital Asset Upload Error]:', err);
       setProductUploadStage('error');
       setProductFileUploadProgress(0);
+      setProductUploadStatusText(err.message || 'Digital file upload failed.');
       setFormError(err.message || 'Digital file upload failed. Please try again.');
+    } finally {
+      productXhrRef.current = null;
     }
   };
 
@@ -2046,17 +2121,43 @@ export const AdminDigitalProductsDashboard: React.FC<{ onBackToSite: () => void 
                       </div>
                     )}
 
-                    {productUploadStage === 'uploading' && (
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-bold text-blue-700">
-                          <span>{productUploadStatusText}</span>
+                    {(productUploadStage === 'uploading' || productUploadStage === 'preparing') && (
+                      <div className="space-y-1.5 p-3 rounded-xl bg-blue-50 border border-blue-200">
+                        <div className="flex justify-between text-xs font-bold text-blue-800">
+                          <span>{productUploadStatusText || 'Uploading digital asset...'}</span>
                           <span>{productFileUploadProgress}%</span>
                         </div>
-                        <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                        <div className="w-full bg-blue-200 rounded-full h-2.5 overflow-hidden">
                           <div
-                            className="bg-blue-600 h-full transition-all duration-300"
+                            className="bg-blue-600 h-full transition-all duration-300 rounded-full"
                             style={{ width: `${productFileUploadProgress}%` }}
                           />
+                        </div>
+                      </div>
+                    )}
+
+                    {productUploadStage === 'error' && (
+                      <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 space-y-2">
+                        <div className="flex items-center justify-between text-xs font-bold text-rose-800">
+                          <span>Upload Failed: {productUploadStatusText || 'An error occurred during file upload.'}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {selectedFileToUpload && (
+                            <button
+                              type="button"
+                              onClick={() => uploadProductFile(selectedFileToUpload)}
+                              className="px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs cursor-pointer shadow-sm flex items-center gap-1"
+                            >
+                              <span>↻ Retry Upload</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => productFileInputRef.current?.click()}
+                            className="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs cursor-pointer"
+                          >
+                            Select Different File
+                          </button>
                         </div>
                       </div>
                     )}

@@ -5,7 +5,11 @@ import path from 'path';
 import dotenv from 'dotenv';
 import multer from 'multer';
 import os from 'os';
+import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -821,7 +825,7 @@ app.post(['/api/digital/finalize-upload', '/api/digital/finalize-upload/'], asyn
     }
     writeStream.end();
 
-    await new Promise((resolve) => writeStream.on('finish', resolve));
+    await new Promise<void>((resolve) => writeStream.on('finish', () => resolve()));
 
     try {
       fs.rmSync(uploadDir, { recursive: true, force: true });
@@ -850,7 +854,8 @@ app.post(['/api/digital/finalize-upload', '/api/digital/finalize-upload/'], asyn
 // 7. Secure Product Download Route - Authenticates and streams the physical purchased asset
 app.get('/api/digital/download', async (req, res) => {
   try {
-    const { token, customerId, productId, orderId, adminToken, filePath: reqFilePath, fileName: reqFileName } = req.query;
+    const { token, customerId, productId, orderId, adminToken, filePath: qFilePath, file: qFile, fileName: reqFileName } = req.query;
+    const reqFilePath = (qFilePath || qFile) as string;
     const isAdmin = adminToken === 'mani_admin_secret_token_2026';
     let isAuthorized = false;
     let authorizedCustomer = (customerId as string) || '';

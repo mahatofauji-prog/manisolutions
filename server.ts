@@ -577,7 +577,7 @@ async function startServer() {
       }
       writeStream.end();
 
-      await new Promise((resolve) => writeStream.on('finish', resolve));
+      await new Promise<void>((resolve) => writeStream.on('finish', () => resolve()));
 
       // Remove temporary chunk directory
       try {

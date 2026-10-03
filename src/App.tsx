@@ -57,14 +57,10 @@ export default function App() {
       return 'admin';
     }
     if (
-      path === '/digital-products/thank-you' || 
-      path === '/digital-products/thank-you/' || 
-      path === '/thank-you' || 
-      path === '/thank-you/' ||
-      path === '/payment-success' ||
-      path === '/payment-success/' ||
-      path === '/order-success' ||
-      path === '/order-success/'
+      path.includes('thank-you') || 
+      path.includes('thankyou') || 
+      path.includes('payment-success') || 
+      path.includes('order-success')
     ) {
       return 'digital-thank-you';
     }

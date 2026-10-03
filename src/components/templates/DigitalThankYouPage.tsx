@@ -36,72 +36,26 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
 
       if (typeof window === 'undefined') return;
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const paymentId = urlParams.get('razorpay_payment_id') || urlParams.get('payment_id') || urlParams.get('razorpay_payment_link_id');
-      const productId = urlParams.get('product_id') || urlParams.get('productId') || urlParams.get('id');
-      const customerEmail = urlParams.get('customer_email') || urlParams.get('email') || urlParams.get('customerEmail');
-      const customerName = urlParams.get('customer_name') || urlParams.get('name') || urlParams.get('customerName') || 'Valued Customer';
-      const customerPhone = urlParams.get('customer_phone') || urlParams.get('phone') || '';
-      const orderId = urlParams.get('order_id') || urlParams.get('orderId');
-      const rawAmount = urlParams.get('amount');
+      let storedOrder: any = null;
+      try {
+        const raw = localStorage.getItem('last_completed_order');
+        if (raw) storedOrder = JSON.parse(raw);
+      } catch {}
 
-      // Check if this was a direct visit without any parameters or if we want guaranteed success display
-      if (!paymentId && !orderId && !productId) {
-        // Check if there is an existing customer session with active access
-        const curCustomer = digitalProductsStorage.getCurrentCustomer();
-        const customerOrders = curCustomer?.email ? digitalProductsStorage.getCustomerOrders(curCustomer.email) : [];
-        if (customerOrders.length > 0 && customerOrders[0].paymentStatus === 'Paid') {
-          const lastOrder = customerOrders[0];
-          const prod = digitalProductsStorage.getAll().find(p => p.id === lastOrder.items[0]?.productId) || digitalProductsStorage.getAll()[0];
-          if (prod) {
-            setProduct(prod);
-            setOrder(lastOrder);
-            setDownloadToken(btoa(JSON.stringify({ payload: `${curCustomer?.email || 'customer@manisolutions.com'}|${prod.id}|${lastOrder.id}|${Date.now() + 86400000}`, sig: 'verified', exp: Date.now() + 86400000 })));
-            setIsVerified(true);
-            setIsVerifying(false);
-            return;
-          }
-        }
+      const urlParams = new URLSearchParams(window.location.search || window.location.hash.substring(window.location.hash.indexOf('?')));
+      const paymentId = urlParams.get('razorpay_payment_id') || urlParams.get('payment_id') || urlParams.get('razorpay_payment_link_id') || storedOrder?.paymentId;
+      const productId = urlParams.get('product_id') || urlParams.get('productId') || urlParams.get('id') || storedOrder?.productId;
+      const customerEmail = urlParams.get('customer_email') || urlParams.get('email') || urlParams.get('customerEmail') || storedOrder?.customerEmail;
+      const customerName = urlParams.get('customer_name') || urlParams.get('name') || urlParams.get('customerName') || storedOrder?.customerName || 'Valued Customer';
+      const customerPhone = urlParams.get('customer_phone') || urlParams.get('phone') || storedOrder?.customerPhone || '';
+      const orderId = urlParams.get('order_id') || urlParams.get('orderId') || storedOrder?.orderId;
+      const rawAmount = urlParams.get('amount') || (storedOrder?.amount ? String(storedOrder.amount) : undefined);
 
-        // Guaranteed fallback: Show Trading Master product order successfully
-        const defaultProd = digitalProductsStorage.getAll().find(p => p.id === 'DP-TRADING-MASTER-2026') || digitalProductsStorage.getAll()[0] || {
-          id: 'DP-TRADING-MASTER-2026',
-          name: 'Trading Master - Android Trading App',
-          slug: 'trading-master',
-          category: 'Trading',
-          shortDescription: 'Your premium downloadable digital asset.',
-          fullDescription: '',
-          thumbnailUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop',
-          productType: 'Digital Download',
-          price: 999,
-          status: 'published',
-          isFeatured: true,
-          features: ['Instant Download Access', 'Verified Ownership'],
-          faqs: [],
-          createdAt: new Date().toISOString()
-        };
-
-        const fallbackOrder: DigitalOrder = {
-          id: `ORD-2026-${String(Date.now()).slice(-5)}`,
-          customerId: curCustomer?.email || 'customer@manisolutions.com',
-          customerName: curCustomer?.name || 'Valued Customer',
-          customerEmail: curCustomer?.email || 'customer@manisolutions.com',
-          items: [{ productId: defaultProd.id, productName: defaultProd.name, price: defaultProd.price, quantity: 1 }],
-          subtotal: defaultProd.price,
-          discount: 0,
-          totalAmount: defaultProd.price,
-          paymentProvider: 'razorpay',
-          paymentId: `pay_${Date.now()}`,
-          paymentStatus: 'Paid',
-          accessStatus: 'Active',
-          createdAt: new Date().toISOString()
-        };
-
-        setProduct(defaultProd);
-        setOrder(fallbackOrder);
-        setDownloadToken(btoa(JSON.stringify({ payload: `fallback|${defaultProd.id}|${fallbackOrder.id}|${Date.now() + 86400000}`, sig: 'verified', exp: Date.now() + 86400000 })));
-        setIsVerified(true);
+      // Check if this was a direct visit without any parameters or stored order
+      if (!paymentId && !orderId && !productId && !storedOrder) {
+        setIsVerified(false);
         setIsVerifying(false);
+        setErrorMessage('🔒 Unauthorized Access: No verified payment record found. Please purchase a digital product from our store to receive download access.');
         return;
       }
 
@@ -161,12 +115,12 @@ export const DigitalThankYouPage: React.FC<DigitalThankYouPageProps> = ({
           setIsVerified(true);
         } else {
           setIsVerified(false);
-          setErrorMessage(data.message || 'Payment verification could not be completed.');
+          setErrorMessage(data.message || '🔒 Payment Verification Failed: No authentic payment was recorded for this transaction. Direct download access is restricted.');
         }
       } catch (err: any) {
         console.error('Payment verification error:', err);
         setIsVerified(false);
-        setErrorMessage('Failed to verify payment with the server. Please check your internet connection.');
+        setErrorMessage('Failed to verify payment authorization with the server. Please check your internet connection.');
       } finally {
         setIsVerifying(false);
       }

@@ -732,6 +732,7 @@ export interface DigitalOrder {
   totalAmount: number;
   paymentId?: string; // Razorpay payment ID
   razorpayOrderId?: string;
+  paymentProvider?: string;
   paymentStatus: 'Pending' | 'Paid' | 'Failed' | 'Refunded';
   accessStatus: 'Active' | 'Revoked' | 'Pending';
   couponCode?: string;
