@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGrad" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#0e172e" />
+      <stop offset="45%" stop-color="#0a0f1d" />
+      <stop offset="100%" stop-color="#040711" />
+    </radialGradient>
+    <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ECC348" />
+      <stop offset="50%" stop-color="#C79A22" />
+      <stop offset="100%" stop-color="#E2B744" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ECC348" />
+      <stop offset="50%" stop-color="#C79A22" />
+      <stop offset="100%" stop-color="#E2B744" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer Dark Navy Background Circle -->
+  <circle cx="256" cy="256" r="248" fill="url(#bgGrad)" stroke="url(#goldRing)" stroke-width="12" />
+  
+  <!-- Inner Subtle Gold Ring -->
+  <circle cx="256" cy="256" r="226" fill="none" stroke="#C79A22" stroke-width="5" opacity="0.6" />
+  
+  <!-- The Signature Gold "M" for MANI Solution -->
+  <path d="M133 368 V 154 L 256 276 L 379 154 V 368"
+        fill="none"
+        stroke="url(#goldGrad)"
+        stroke-width="41"
+        stroke-linecap="round"
+        stroke-linejoin="round" />
+        
+  <!-- Center Apex Accent Gold Bead -->
+  <circle cx="256" cy="276" r="18" fill="#ECC348" />
+</svg>

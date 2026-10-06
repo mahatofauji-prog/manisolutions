@@ -471,12 +471,36 @@ export const AdminBrandSettingsDashboard: React.FC<AdminBrandSettingsDashboardPr
 
               <div className="p-6 rounded-2xl bg-[#F7F6F2] border border-[#E4E1DA] flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-20 h-20 rounded-2xl bg-white border border-[#E4E1DA] p-3 shadow-inner flex items-center justify-center overflow-hidden shrink-0">
-                    <img
-                      src={previewDisplayUrl}
-                      alt="Active Logo"
-                      className="max-w-full max-h-full object-contain"
-                    />
+                  <div className="w-20 h-20 rounded-2xl bg-[#040711] border border-[#C79A22]/50 p-2 shadow-inner flex items-center justify-center overflow-hidden shrink-0">
+                    {isCustom || stagedLogoUrl ? (
+                      <img
+                        src={previewDisplayUrl}
+                        alt="Active Logo"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-full overflow-hidden border border-[#C79A22] flex items-center justify-center bg-gradient-to-br from-[#0a0f1d] to-[#040711]">
+                        <svg viewBox="0 0 100 100" className="w-4/5 h-4/5">
+                          <circle cx="50" cy="50" r="46" fill="none" stroke="#C79A22" strokeWidth="3" opacity="0.6" />
+                          <path
+                            d="M26 72V30L50 54L74 30V72"
+                            fill="none"
+                            stroke="url(#goldGradPreview)"
+                            strokeWidth="8"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <circle cx="50" cy="54" r="3.5" fill="#ECC348" />
+                          <defs>
+                            <linearGradient id="goldGradPreview" x1="0" y1="0" x2="100%" y2="100%">
+                              <stop offset="0%" stopColor="#ECC348" />
+                              <stop offset="50%" stopColor="#C79A22" />
+                              <stop offset="100%" stopColor="#E2B744" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <div className="text-xs font-bold text-[#171A1F]">

@@ -16,12 +16,14 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
   className = '',
   onClick
 }) => {
-  const [logoUrl, setLogoUrl] = useState<string>(() => brandLogoStorage.getActiveLogoUrl() || '/logo.png');
+  const [isCustom, setIsCustom] = useState<boolean>(() => brandLogoStorage.isCustom());
+  const [logoUrl, setLogoUrl] = useState<string>(() => brandLogoStorage.getActiveLogoUrl());
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const handleUpdate = () => {
-      setLogoUrl(brandLogoStorage.getActiveLogoUrl() || '/logo.png');
+      setIsCustom(brandLogoStorage.isCustom());
+      setLogoUrl(brandLogoStorage.getActiveLogoUrl());
       setHasError(false);
     };
 
@@ -59,22 +61,18 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
     >
       {/* Round Shape Brand Logo Image */}
       <div className={`relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22]/70 shadow-md bg-slate-950 ${iconSizeMap[size]}`}>
-        {!hasError && logoUrl ? (
+        {isCustom && !hasError && logoUrl ? (
           <img
             src={logoUrl}
             alt="MANI Solution Logo"
             onError={() => {
-              if (logoUrl !== '/logo.png') {
-                setLogoUrl('/logo.png');
-              } else {
-                setHasError(true);
-              }
+              setHasError(true);
             }}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
-          /* SVG Vector Fallback */
+          /* The Original Signature MANI Solution Gold M Emblem */
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0a0f1d] to-[#040711] text-[#ECC348]">
             <svg viewBox="0 0 100 100" className="w-4/5 h-4/5">
               <circle cx="50" cy="50" r="46" fill="none" stroke="#C79A22" strokeWidth="3" opacity="0.6" />
