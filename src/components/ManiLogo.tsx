@@ -16,12 +16,12 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
   className = '',
   onClick
 }) => {
-  const [logoUrl, setLogoUrl] = useState<string>(() => brandLogoStorage.getActiveLogoUrl());
+  const [logoUrl, setLogoUrl] = useState<string>(() => brandLogoStorage.getActiveLogoUrl() || '/logo.png');
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const handleUpdate = () => {
-      setLogoUrl(brandLogoStorage.getActiveLogoUrl());
+      setLogoUrl(brandLogoStorage.getActiveLogoUrl() || '/logo.png');
       setHasError(false);
     };
 
@@ -63,7 +63,13 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
           <img
             src={logoUrl}
             alt="MANI Solution Logo"
-            onError={() => setHasError(true)}
+            onError={() => {
+              if (logoUrl !== '/logo.png') {
+                setLogoUrl('/logo.png');
+              } else {
+                setHasError(true);
+              }
+            }}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
           />

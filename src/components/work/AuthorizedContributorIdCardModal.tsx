@@ -157,7 +157,7 @@ export const AuthorizedContributorIdCardModal: React.FC<AuthorizedContributorIdC
                   crossOrigin="anonymous"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/mani-logo.png';
+                    (e.target as HTMLImageElement).src = '/logo.png';
                   }}
                 />
               ) : (

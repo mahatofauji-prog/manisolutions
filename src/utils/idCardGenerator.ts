@@ -101,7 +101,7 @@ export async function renderFrontCardToCanvas(
 
   // 5. Logo & Header
   const [logoImg, photoImg] = await Promise.all([
-    loadImage(logoSrc || '/images/mani-logo.png'),
+    loadImage(logoSrc || '/logo.png'),
     loadImage(contributor.profilePhoto)
   ]);
 

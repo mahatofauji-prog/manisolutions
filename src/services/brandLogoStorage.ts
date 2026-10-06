@@ -129,9 +129,15 @@ try {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed.activeLogoUrl === 'string') {
+        const isCleanCustom = Boolean(
+          parsed.isCustom && 
+          parsed.activeLogoUrl && 
+          !parsed.activeLogoUrl.includes('\uFFFD') && 
+          (parsed.activeLogoUrl.startsWith('data:image/') || parsed.activeLogoUrl.startsWith('http') || parsed.activeLogoUrl.startsWith('/'))
+        );
         inMemoryConfig = {
-          activeLogoUrl: parsed.activeLogoUrl || '',
-          isCustom: Boolean(parsed.activeLogoUrl && parsed.activeLogoUrl.trim().length > 0),
+          activeLogoUrl: isCleanCustom ? parsed.activeLogoUrl : '',
+          isCustom: isCleanCustom,
           fileName: parsed.fileName,
           fileSizeFormatted: parsed.fileSizeFormatted,
           updatedAt: parsed.updatedAt || new Date().toISOString()
@@ -147,9 +153,21 @@ try {
 if (typeof window !== 'undefined') {
   supabaseDatabase.getSetting<BrandLogoConfig>('brand_logo_config').then(data => {
     if (data && typeof data.activeLogoUrl === 'string') {
-      inMemoryConfig = data;
+      const isCleanCustom = Boolean(
+        data.isCustom && 
+        data.activeLogoUrl && 
+        !data.activeLogoUrl.includes('\uFFFD') && 
+        (data.activeLogoUrl.startsWith('data:image/') || data.activeLogoUrl.startsWith('http') || data.activeLogoUrl.startsWith('/'))
+      );
+      inMemoryConfig = {
+        activeLogoUrl: isCleanCustom ? data.activeLogoUrl : '',
+        isCustom: isCleanCustom,
+        fileName: data.fileName,
+        fileSizeFormatted: data.fileSizeFormatted,
+        updatedAt: data.updatedAt || new Date().toISOString()
+      };
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(inMemoryConfig));
       } catch {}
       notifyListeners(false);
     }
@@ -265,15 +283,24 @@ export const brandLogoStorage = {
 
   // Returns the active logo URL (custom or fallback to default MANI Solution logo)
   getActiveLogoUrl(): string {
-    if (inMemoryConfig.isCustom && inMemoryConfig.activeLogoUrl) {
+    if (
+      inMemoryConfig.isCustom && 
+      inMemoryConfig.activeLogoUrl && 
+      !inMemoryConfig.activeLogoUrl.includes('\uFFFD') &&
+      (inMemoryConfig.activeLogoUrl.startsWith('data:image/') || inMemoryConfig.activeLogoUrl.startsWith('http') || inMemoryConfig.activeLogoUrl.startsWith('/'))
+    ) {
       return inMemoryConfig.activeLogoUrl;
     }
-    return DEFAULT_LOGO_URL;
+    return DEFAULT_LOGO_URL || '/logo.png';
   },
 
   // Returns true if a custom logo is currently configured
   isCustom(): boolean {
-    return Boolean(inMemoryConfig.isCustom && inMemoryConfig.activeLogoUrl);
+    return Boolean(
+      inMemoryConfig.isCustom && 
+      inMemoryConfig.activeLogoUrl && 
+      !inMemoryConfig.activeLogoUrl.includes('\uFFFD')
+    );
   },
 
   getDefaultLogoUrl(): string {
