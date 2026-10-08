@@ -98,13 +98,19 @@ export const Navbar: React.FC<NavbarProps> = ({
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between min-h-[48px] sm:min-h-[56px]">
-          {/* Logo */}
-          <div className="flex items-center my-1">
-            <ManiLogo
-              size="md"
-              onClick={() => handleLinkClick('home')}
-              className="transition-transform duration-200 hover:scale-[1.02]"
-            />
+          {/* Header Branding Banner */}
+          <div
+            id="header-branding-wrapper"
+            className="flex-1 max-w-[260px] xs:max-w-[320px] sm:max-w-[380px] md:max-w-[440px] lg:max-w-[480px] xl:max-w-[520px] h-11 sm:h-12 md:h-[50px] flex items-center cursor-pointer mr-2 sm:mr-4 shrink"
+            onClick={() => handleLinkClick('home')}
+            title="MANI Solution - Home"
+          >
+            <div className="header-branding-container">
+              <img
+                src="/images/mani-brand-name-original.png"
+                alt="MANI Solution - Modern Advancement for New India"
+              />
+            </div>
           </div>
 
           {/* Desktop Navigation Links */}
@@ -252,12 +258,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="fixed inset-0 z-50 lg:hidden bg-[#F7F6F2]/98 backdrop-blur-2xl px-5 pt-4 pb-6 overflow-y-auto flex flex-col justify-between animate-fadeIn">
           <div className="space-y-6">
             <div className="pb-4 border-b border-[#E4E1DA] flex items-center justify-between">
-              <div className="flex items-center my-1">
-                <ManiLogo
-                  size="md"
-                  onClick={() => handleLinkClick('home')}
-                  className="cursor-pointer"
-                />
+              <div
+                className="flex-1 max-w-[260px] sm:max-w-[300px] h-11 sm:h-12 flex items-center cursor-pointer mr-2"
+                onClick={() => handleLinkClick('home')}
+                title="MANI Solution - Home"
+              >
+                <div className="header-branding-container">
+                  <img
+                    src="/images/mani-brand-name-original.png"
+                    alt="MANI Solution"
+                  />
+                </div>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
