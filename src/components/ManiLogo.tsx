@@ -33,23 +33,23 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
   }, []);
 
   const iconSizeMap = {
-    sm: 'w-7 h-7 sm:w-8 sm:h-8',
-    md: 'w-8 h-8 sm:w-10 sm:h-10 md:w-11 md:h-11',
-    lg: 'w-10 h-10 sm:w-12 sm:h-12',
-    xl: 'w-12 h-12 sm:w-16 sm:h-16'
+    sm: 'w-8 h-8 sm:w-9 sm:h-9',
+    md: 'w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13',
+    lg: 'w-12 h-12 sm:w-14 sm:h-14 md:w-15 md:h-15',
+    xl: 'w-16 h-16 sm:w-20 sm:h-20'
   };
 
   const titleSizeMap = {
     sm: 'text-sm sm:text-base',
-    md: 'text-[18px] sm:text-[19px] md:text-xl',
-    lg: 'text-xl sm:text-2xl',
+    md: 'text-base sm:text-lg md:text-xl',
+    lg: 'text-lg sm:text-xl md:text-2xl',
     xl: 'text-2xl sm:text-3xl'
   };
 
   const subtitleSizeMap = {
-    sm: 'text-[7px] sm:text-[8px] tracking-wider',
-    md: 'text-[7.5px] xs:text-[8px] sm:text-[9.5px] md:text-[11px] tracking-tight xs:tracking-wider sm:tracking-widest',
-    lg: 'text-[9px] sm:text-xs tracking-widest',
+    sm: 'text-[7.5px] sm:text-[8.5px] tracking-wider',
+    md: 'text-[8.5px] sm:text-[10px] md:text-[11px] tracking-wider sm:tracking-widest',
+    lg: 'text-[9.5px] sm:text-xs tracking-widest',
     xl: 'text-xs sm:text-sm tracking-widest'
   };
 
@@ -60,7 +60,7 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
       className={`inline-flex items-center gap-2 sm:gap-2.5 md:gap-3 select-none ${onClick ? 'cursor-pointer group' : ''} ${className}`}
     >
       {/* Round Shape Brand Logo Image */}
-      <div className={`relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22]/70 shadow-md bg-slate-950 ${iconSizeMap[size]}`}>
+      <div className={`relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-md bg-[#040B18] ${iconSizeMap[size]}`}>
         {!hasError && logoUrl ? (
           <img
             src={logoUrl}
@@ -73,7 +73,8 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
               }
             }}
             referrerPolicy="no-referrer"
-            className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-105"
+            style={{ imageRendering: 'auto' }}
           />
         ) : (
           /* The Original Signature MANI Solution Gold M Emblem */

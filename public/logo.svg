@@ -1,36 +1,231 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <defs>
-    <radialGradient id="bgGrad" cx="30%" cy="30%" r="70%">
-      <stop offset="0%" stop-color="#0e172e" />
-      <stop offset="45%" stop-color="#0a0f1d" />
-      <stop offset="100%" stop-color="#040711" />
+    <!-- Metallic Gold Outer Gradient -->
+    <linearGradient id="goldRim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCEBA6"/>
+      <stop offset="25%" stop-color="#C79A22"/>
+      <stop offset="50%" stop-color="#FFEAA7"/>
+      <stop offset="75%" stop-color="#996F14"/>
+      <stop offset="100%" stop-color="#F5D77F"/>
+    </linearGradient>
+
+    <!-- Chrome / Silver Gradient for S -->
+    <linearGradient id="silverS" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="35%" stop-color="#E2E8F0"/>
+      <stop offset="70%" stop-color="#94A3B8"/>
+      <stop offset="100%" stop-color="#CBD5E1"/>
+    </linearGradient>
+
+    <!-- Deep Space Navy Background for Globe -->
+    <radialGradient id="globeSpace" cx="50%" cy="38%" r="48%">
+      <stop offset="0%" stop-color="#0E234A"/>
+      <stop offset="60%" stop-color="#051024"/>
+      <stop offset="100%" stop-color="#020712"/>
     </radialGradient>
-    <linearGradient id="goldRing" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ECC348" />
-      <stop offset="50%" stop-color="#C79A22" />
-      <stop offset="100%" stop-color="#E2B744" />
+
+    <!-- Lower Badge Cream/White Gradient -->
+    <radialGradient id="whitePlate" cx="50%" cy="85%" r="65%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="75%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#EEF2F6"/>
+    </radialGradient>
+
+    <!-- Gold 3D Bevel for M -->
+    <linearGradient id="goldMFront" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3B0"/>
+      <stop offset="40%" stop-color="#ECC348"/>
+      <stop offset="80%" stop-color="#B8860B"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
     </linearGradient>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ECC348" />
-      <stop offset="50%" stop-color="#C79A22" />
-      <stop offset="100%" stop-color="#E2B744" />
+
+    <linearGradient id="goldMSide" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#996F14"/>
+      <stop offset="100%" stop-color="#5C4008"/>
     </linearGradient>
+
+    <!-- Gold Orbit Ribbon -->
+    <linearGradient id="orbitGold" x1="0%" y1="0%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#FDF2B8"/>
+      <stop offset="30%" stop-color="#D4AF37"/>
+      <stop offset="70%" stop-color="#996F14"/>
+      <stop offset="100%" stop-color="#FCEBA6"/>
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45" />
+    </filter>
   </defs>
-  
-  <!-- Outer Dark Navy Background Circle -->
-  <circle cx="256" cy="256" r="248" fill="url(#bgGrad)" stroke="url(#goldRing)" stroke-width="12" />
-  
-  <!-- Inner Subtle Gold Ring -->
-  <circle cx="256" cy="256" r="226" fill="none" stroke="#C79A22" stroke-width="5" opacity="0.6" />
-  
-  <!-- The Signature Gold "M" for MANI Solution -->
-  <path d="M133 368 V 154 L 256 276 L 379 154 V 368"
-        fill="none"
-        stroke="url(#goldGrad)"
-        stroke-width="41"
-        stroke-linecap="round"
-        stroke-linejoin="round" />
-        
-  <!-- Center Apex Accent Gold Bead -->
-  <circle cx="256" cy="276" r="18" fill="#ECC348" />
+
+  <!-- 1. Master Circular Badge Base -->
+  <circle cx="512" cy="512" r="504" fill="url(#goldRim)" />
+  <circle cx="512" cy="512" r="486" fill="#040B18" />
+  <circle cx="512" cy="512" r="476" fill="url(#goldRim)" />
+
+  <!-- 2. Inner Area: Top Globe & Bottom White Plate -->
+  <!-- Upper Half Globe Background -->
+  <path d="M 50 512 A 462 462 0 1 1 974 512 Z" fill="url(#globeSpace)" />
+
+  <!-- Lower Half White Banner Area -->
+  <path d="M 50 512 A 462 462 0 0 0 974 512 Z" fill="url(#whitePlate)" />
+  <!-- Subtle divider glow -->
+  <path d="M 50 512 Q 512 550 974 512" stroke="#ECC348" stroke-width="3" fill="none" opacity="0.6"/>
+
+  <!-- 3. Globe Grid Lines & Glowing India Network -->
+  <!-- Globe Meridians & Parallels -->
+  <g stroke="#C79A22" stroke-width="1.5" opacity="0.35" fill="none">
+    <ellipse cx="512" cy="310" rx="360" ry="190" />
+    <ellipse cx="512" cy="310" rx="260" ry="190" />
+    <ellipse cx="512" cy="310" rx="140" ry="190" />
+    <line x1="512" y1="60" x2="512" y2="510" />
+    <ellipse cx="512" cy="220" rx="330" ry="70" />
+    <ellipse cx="512" cy="340" rx="350" ry="80" />
+    <ellipse cx="512" cy="440" rx="320" ry="70" />
+  </g>
+
+  <!-- Glowing Map of India in Gold Technology Mesh -->
+  <g id="indiaMapMesh" opacity="0.9" filter="url(#glow)">
+    <!-- Simplified India Subcontinent Contour & Tech Nodes -->
+    <path d="M 480 180 Q 500 150 515 140 Q 530 160 550 180 L 570 200 Q 600 220 600 250 Q 570 270 560 300 L 530 360 Q 515 410 512 430 Q 508 410 490 360 L 460 300 Q 440 270 440 240 Q 450 200 480 180 Z"
+          fill="#FFEAA7" opacity="0.22" />
+    <!-- Bright Gold Coastline & Borders -->
+    <path d="M 480 180 Q 500 150 515 140 Q 530 160 550 180 L 570 200 Q 600 220 600 250 Q 570 270 560 300 L 530 360 Q 515 410 512 430 Q 508 410 490 360 L 460 300 Q 440 270 440 240 Q 450 200 480 180 Z"
+          stroke="#F5D061" stroke-width="2.5" fill="none" />
+    <!-- Interconnected Glowing Technology Nodes across India -->
+    <line x1="515" y1="180" x2="475" y2="240" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="515" y1="180" x2="560" y2="230" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="475" y1="240" x2="512" y2="300" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="560" y1="230" x2="512" y2="300" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="512" y1="300" x2="520" y2="370" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="512" y1="300" x2="480" y2="340" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <line x1="480" y1="340" x2="512" y2="420" stroke="#FFF" stroke-width="1.8" opacity="0.8"/>
+    <!-- Tech City Dots -->
+    <circle cx="515" cy="180" r="5" fill="#FFF" />
+    <circle cx="475" cy="240" r="4.5" fill="#FFF" />
+    <circle cx="560" cy="230" r="4.5" fill="#FFF" />
+    <circle cx="512" cy="300" r="5.5" fill="#FFF" />
+    <circle cx="520" cy="370" r="4.5" fill="#FFF" />
+    <circle cx="480" cy="340" r="4" fill="#FFF" />
+    <circle cx="512" cy="420" r="4" fill="#FFF" />
+  </g>
+
+  <!-- Surrounding Network Constellations on World Globe -->
+  <g stroke="#ECC348" stroke-width="1" opacity="0.5">
+    <line x1="280" y1="220" x2="350" y2="260" />
+    <line x1="350" y1="260" x2="440" y2="240" />
+    <line x1="600" y1="250" x2="680" y2="270" />
+    <line x1="680" y1="270" x2="750" y2="230" />
+    <line x1="530" y1="360" x2="620" y2="390" />
+    <circle cx="280" cy="220" r="3" fill="#ECC348"/>
+    <circle cx="350" cy="260" r="3.5" fill="#ECC348"/>
+    <circle cx="680" cy="270" r="3.5" fill="#ECC348"/>
+    <circle cx="750" cy="230" r="3" fill="#ECC348"/>
+    <circle cx="620" cy="390" r="3" fill="#ECC348"/>
+  </g>
+
+  <!-- 4. Floating Tech Cubes (Top Right of S) -->
+  <g fill="url(#goldRim)" filter="url(#softShadow)">
+    <rect x="730" y="230" width="34" height="34" rx="4" />
+    <rect x="774" y="250" width="28" height="28" rx="3" />
+    <rect x="750" y="274" width="28" height="28" rx="3" />
+    <rect x="788" y="288" width="22" height="22" rx="3" />
+  </g>
+
+  <!-- 5. 3D Interlocking "MS" Monogram -->
+  <!-- Shadow of MS -->
+  <g filter="url(#softShadow)">
+    <!-- 3D Shadow extrusion of M -->
+    <path d="M 235 595 L 235 275 L 340 275 L 450 445 L 450 595 L 380 595 L 380 435 L 295 595 Z" fill="#201502" />
+    <path d="M 450 445 L 560 275 L 665 275 L 665 595 L 605 595 L 520 435 L 520 595 L 450 595 Z" fill="#201502" />
+  </g>
+
+  <!-- The "M" Layer (Rich 3D Metallic Gold) -->
+  <g filter="url(#softShadow)">
+    <!-- Base 3D Bevel/Depth -->
+    <path d="M 230 580 L 230 260 L 335 260 L 445 435 L 555 260 L 660 260 L 660 580 L 590 580 L 590 380 L 485 550 L 405 550 L 300 380 L 300 580 Z"
+          fill="url(#goldMSide)" />
+    <!-- Front Face -->
+    <path d="M 235 570 L 235 268 L 330 268 L 445 445 L 560 268 L 655 268 L 655 570 L 595 570 L 595 385 L 480 560 L 410 560 L 295 385 L 295 570 Z"
+          fill="url(#goldMFront)" stroke="#FFF3B0" stroke-width="3" stroke-linejoin="round" />
+    <!-- M Bevel Highlight Lines -->
+    <path d="M 240 273 L 325 273 L 445 450 L 565 273 L 650 273" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.8"/>
+  </g>
+
+  <!-- The "S" Layer (Sleek Metallic Chrome / Silver overlapping M) -->
+  <g filter="url(#softShadow)">
+    <!-- S 3D Depth / Side -->
+    <path d="M 750 340 C 750 280 690 270 610 270 C 530 270 480 300 480 360 C 480 430 540 450 630 470 C 720 490 760 510 760 560 C 760 620 690 645 590 645 C 500 645 450 615 450 550 L 525 550 C 525 585 555 600 600 600 C 650 600 685 585 685 550 C 685 510 650 495 560 475 C 470 455 410 430 410 365 C 410 295 475 240 600 240 C 710 240 770 285 770 340 Z"
+          fill="#475569" />
+    <!-- S Front Face in Silver Chrome -->
+    <path d="M 740 340 C 740 290 685 275 610 275 C 535 275 490 305 490 360 C 490 425 545 445 635 465 C 725 485 750 510 750 555 C 750 610 685 635 590 635 C 510 635 460 605 460 550 L 530 550 C 530 580 555 595 595 595 C 640 595 675 580 675 550 C 675 515 645 500 555 480 C 465 460 420 435 420 370 C 420 305 480 250 595 250 C 700 250 750 290 750 340 Z"
+          fill="url(#silverS)" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round" />
+    <!-- S Brilliant White Highlights -->
+    <path d="M 600 255 C 680 255 730 285 735 325" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.9"/>
+    <path d="M 465 550 C 470 590 515 625 590 625" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.8"/>
+  </g>
+
+  <!-- 6. Golden Orbital Ring Swoosh looping around MS -->
+  <g filter="url(#softShadow)">
+    <!-- Back segment of orbit ring -->
+    <path d="M 190 470 Q 150 490 200 520 Q 350 570 580 530" 
+          stroke="url(#orbitGold)" stroke-width="22" stroke-linecap="round" fill="none" opacity="0.7"/>
+    <!-- Front segment of orbit ring looping across MS with 3D ribbon effect -->
+    <path d="M 180 470 Q 280 380 550 420 Q 780 460 815 480 Q 840 495 810 525 Q 730 570 420 575 Q 230 570 180 520 Z"
+          fill="url(#orbitGold)" stroke="#FFF3B0" stroke-width="3" />
+    <!-- Lens Flare / Glint on the Orbit Ring -->
+    <circle cx="360" cy="550" r="14" fill="#FFFFFF" filter="url(#glow)"/>
+    <polygon points="360,510 366,550 400,550 366,554 360,590 354,554 320,550 354,550" fill="#FFFFFF" opacity="0.95"/>
+  </g>
+
+  <!-- 7. Typography (Crisp, High-Contrast, Vector Perfection) -->
+  <!-- "MANI" in Bold Tech Charcoal with Gold Triangle in 'A' & Gold Cube Dot in 'i' -->
+  <g filter="url(#softShadow)">
+    <text x="512" y="750" 
+          font-family="Outfit, Inter, 'Space Grotesk', system-ui, sans-serif" 
+          font-size="140" 
+          font-weight="900" 
+          letter-spacing="14" 
+          fill="#111827" 
+          text-anchor="middle">
+      MANI
+    </text>
+    <!-- Gold Triangle accent in 'A' -->
+    <polygon points="502,680 488,710 516,710" fill="url(#goldRim)"/>
+    <!-- Gold 3D Cube accent above 'I' -->
+    <rect x="668" y="635" width="22" height="22" rx="3" fill="url(#goldRim)"/>
+  </g>
+
+  <!-- Golden Rules & "Solution" -->
+  <g>
+    <!-- Left Gold Accent Line -->
+    <line x1="240" y1="800" x2="350" y2="800" stroke="#C79A22" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- "Solution" Text -->
+    <text x="512" y="814" 
+          font-family="Outfit, Inter, sans-serif" 
+          font-size="62" 
+          font-weight="700" 
+          letter-spacing="12" 
+          fill="#1E293B" 
+          text-anchor="middle">
+      Solution
+    </text>
+    <!-- Right Gold Accent Line -->
+    <line x1="674" y1="800" x2="784" y2="800" stroke="#C79A22" stroke-width="4.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Subtitle: "Modern Advancement for New India" -->
+  <text x="512" y="865" 
+        font-family="Inter, 'Plus Jakarta Sans', system-ui, sans-serif" 
+        font-size="28" 
+        font-weight="600" 
+        letter-spacing="4" 
+        fill="#475569" 
+        text-anchor="middle">
+    Modern Advancement for New India
+  </text>
 </svg>

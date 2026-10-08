@@ -34,8 +34,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenDemoModal }) =
         
         {/* Top Header: Logo, Description & Founder */}
         <div className="space-y-3 text-left border-b border-[var(--theme-border)] pb-6">
-          <div className="transform scale-[1.25] sm:scale-[1.4] origin-left my-1">
-            <ManiLogo size="md" showSubtitle={true} />
+          <div className="flex items-center my-1">
+            <ManiLogo size="lg" showSubtitle={true} />
           </div>
 
           <p className="text-xs sm:text-sm text-[var(--theme-text-secondary)] max-w-2xl leading-relaxed">

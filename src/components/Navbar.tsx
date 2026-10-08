@@ -99,11 +99,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between min-h-[48px] sm:min-h-[56px]">
           {/* Logo */}
-          <div className="transform scale-[1.35] sm:scale-[1.5] origin-left my-1">
+          <div className="flex items-center my-1">
             <ManiLogo
               size="md"
               onClick={() => handleLinkClick('home')}
-              className="transition-transform duration-200 hover:scale-[1.01]"
+              className="transition-transform duration-200 hover:scale-[1.02]"
             />
           </div>
 
@@ -252,9 +252,9 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="fixed inset-0 z-50 lg:hidden bg-[#F7F6F2]/98 backdrop-blur-2xl px-5 pt-4 pb-6 overflow-y-auto flex flex-col justify-between animate-fadeIn">
           <div className="space-y-6">
             <div className="pb-4 border-b border-[#E4E1DA] flex items-center justify-between">
-              <div className="transform scale-[1.35] sm:scale-[1.5] origin-left my-1">
+              <div className="flex items-center my-1">
                 <ManiLogo
-                  size="sm"
+                  size="md"
                   onClick={() => handleLinkClick('home')}
                   className="cursor-pointer"
                 />
