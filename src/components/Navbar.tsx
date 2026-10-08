@@ -98,14 +98,24 @@ export const Navbar: React.FC<NavbarProps> = ({
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between min-h-[48px] sm:min-h-[56px]">
-          {/* Header Branding Banner */}
+          {/* Header Branding: Round Emblem + Full Branding Banner */}
           <div
             id="header-branding-wrapper"
-            className="flex-1 max-w-[260px] xs:max-w-[320px] sm:max-w-[380px] md:max-w-[440px] lg:max-w-[480px] xl:max-w-[520px] h-11 sm:h-12 md:h-[50px] flex items-center cursor-pointer mr-2 sm:mr-4 shrink"
+            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer mr-2 sm:mr-4 select-none shrink-0"
             onClick={() => handleLinkClick('home')}
             title="MANI Solution - Home"
           >
-            <div className="header-branding-container">
+            {/* Round Shape Brand Logo */}
+            <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-md bg-[#040B18] w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 transition-transform duration-200 hover:scale-105">
+              <img
+                src="/logo.png"
+                alt="MANI Solution Logo"
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+
+            {/* Branding Name Banner */}
+            <div className="header-branding-container h-8 xs:h-9 sm:h-10 md:h-11 max-w-[170px] xs:max-w-[210px] sm:max-w-[260px] md:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px]">
               <img
                 src="/images/mani-brand-name-original.png"
                 alt="MANI Solution - Modern Advancement for New India"
@@ -259,11 +269,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="space-y-6">
             <div className="pb-4 border-b border-[#E4E1DA] flex items-center justify-between">
               <div
-                className="flex-1 max-w-[260px] sm:max-w-[300px] h-11 sm:h-12 flex items-center cursor-pointer mr-2"
+                className="flex items-center gap-2.5 cursor-pointer mr-2 select-none"
                 onClick={() => handleLinkClick('home')}
                 title="MANI Solution - Home"
               >
-                <div className="header-branding-container">
+                {/* Round Shape Brand Logo */}
+                <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-md bg-[#040B18] w-9 h-9 sm:w-10 sm:h-10">
+                  <img
+                    src="/logo.png"
+                    alt="MANI Solution Logo"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+
+                {/* Branding Name Banner */}
+                <div className="header-branding-container h-8 sm:h-9 max-w-[180px] xs:max-w-[210px] sm:max-w-[240px]">
                   <img
                     src="/images/mani-brand-name-original.png"
                     alt="MANI Solution"
