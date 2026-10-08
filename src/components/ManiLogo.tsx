@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { brandLogoStorage, subscribeToBrandLogo } from '../services/brandLogoStorage';
+import brandNameImg from '../assets/images/mani_brand_name.png';
 
 interface ManiLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -19,6 +20,7 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
   const [isCustom, setIsCustom] = useState<boolean>(() => brandLogoStorage.isCustom());
   const [logoUrl, setLogoUrl] = useState<string>(() => brandLogoStorage.getActiveLogoUrl());
   const [hasError, setHasError] = useState(false);
+  const [brandNameError, setBrandNameError] = useState(false);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -37,6 +39,13 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
     md: 'w-10 h-10 sm:w-12 sm:h-12 md:w-13 md:h-13',
     lg: 'w-12 h-12 sm:w-14 sm:h-14 md:w-15 md:h-15',
     xl: 'w-16 h-16 sm:w-20 sm:h-20'
+  };
+
+  const brandNameHeightMap = {
+    sm: 'h-6 sm:h-7',
+    md: 'h-7 sm:h-8 md:h-9',
+    lg: 'h-9 sm:h-11 md:h-12',
+    xl: 'h-12 sm:h-15'
   };
 
   const titleSizeMap = {
@@ -102,22 +111,33 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
         )}
       </div>
 
-      {/* Typography */}
+      {/* Typography / Official Branding Name Image */}
       {variant !== 'icon' && (
-        <div className="flex flex-col justify-center text-left">
-          <div className="flex items-center gap-1 sm:gap-1.5 leading-none">
-            <span className={`font-sans font-extrabold tracking-tight text-[var(--theme-text-primary)] ${titleSizeMap[size]}`}>
-              MANI
-            </span>
-            <span className={`font-sans font-semibold tracking-wider text-[#A67C00] ${titleSizeMap[size]}`}>
-              Solution
-            </span>
-          </div>
+        <div className="flex items-center text-left">
+          {!brandNameError ? (
+            <img
+              src={brandNameImg}
+              alt="MANI Solution - Modern Advancement for New India"
+              onError={() => setBrandNameError(true)}
+              className={`w-auto object-contain max-w-[160px] xs:max-w-[180px] sm:max-w-[220px] md:max-w-[260px] lg:max-w-[300px] ${brandNameHeightMap[size]}`}
+            />
+          ) : (
+            <div className="flex flex-col justify-center text-left">
+              <div className="flex items-center gap-1 sm:gap-1.5 leading-none">
+                <span className={`font-sans font-extrabold tracking-tight text-[var(--theme-text-primary)] ${titleSizeMap[size]}`}>
+                  MANI
+                </span>
+                <span className={`font-sans font-semibold tracking-wider text-[#A67C00] ${titleSizeMap[size]}`}>
+                  Solution
+                </span>
+              </div>
 
-          {showSubtitle && (
-            <span className={`font-medium uppercase text-[var(--theme-text-muted)] mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis leading-none ${subtitleSizeMap[size]}`}>
-              Modern Advancement for New India
-            </span>
+              {showSubtitle && (
+                <span className={`font-medium uppercase text-[var(--theme-text-muted)] mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis leading-none ${subtitleSizeMap[size]}`}>
+                  Modern Advancement for New India
+                </span>
+              )}
+            </div>
           )}
         </div>
       )}
