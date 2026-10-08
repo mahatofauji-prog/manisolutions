@@ -98,15 +98,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         }`}
       >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between min-h-[48px] sm:min-h-[56px]">
-          {/* Header Branding: Round Emblem + Full Branding Banner */}
+          {/* Header Branding: Round Emblem + Responsive Branding Banner */}
           <div
             id="header-branding-wrapper"
-            className="flex items-center gap-2.5 sm:gap-3 cursor-pointer mr-2 sm:mr-4 select-none shrink-0"
+            className="flex-1 flex items-center gap-2 sm:gap-3 cursor-pointer mr-2 sm:mr-4 select-none min-w-0 h-10 sm:h-11 md:h-12 max-w-sm lg:max-w-md xl:max-w-lg"
             onClick={() => handleLinkClick('home')}
             title="MANI Solution - Home"
           >
             {/* Round Shape Brand Logo */}
-            <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-md bg-[#040B18] w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 transition-transform duration-200 hover:scale-105">
+            <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-sm bg-[#040B18] w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 transition-transform duration-200 hover:scale-105">
               <img
                 src="/logo.png"
                 alt="MANI Solution Logo"
@@ -114,8 +114,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
             </div>
 
-            {/* Branding Name Banner */}
-            <div className="header-branding-container h-8 xs:h-9 sm:h-10 md:h-11 max-w-[170px] xs:max-w-[210px] sm:max-w-[260px] md:max-w-[320px] lg:max-w-[380px] xl:max-w-[420px]">
+            {/* Complete Available Header Branding Area */}
+            <div className="branding-container flex-1 h-full min-w-0">
               <img
                 src="/images/mani-brand-name-original.png"
                 alt="MANI Solution - Modern Advancement for New India"
@@ -269,12 +269,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="space-y-6">
             <div className="pb-4 border-b border-[#E4E1DA] flex items-center justify-between">
               <div
-                className="flex items-center gap-2.5 cursor-pointer mr-2 select-none"
+                className="flex-1 flex items-center gap-2.5 cursor-pointer mr-2 select-none min-w-0 h-10 sm:h-11 max-w-[280px]"
                 onClick={() => handleLinkClick('home')}
                 title="MANI Solution - Home"
               >
                 {/* Round Shape Brand Logo */}
-                <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-md bg-[#040B18] w-9 h-9 sm:w-10 sm:h-10">
+                <div className="relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22] shadow-sm bg-[#040B18] w-9 h-9 sm:w-10 sm:h-10">
                   <img
                     src="/logo.png"
                     alt="MANI Solution Logo"
@@ -283,7 +283,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </div>
 
                 {/* Branding Name Banner */}
-                <div className="header-branding-container h-8 sm:h-9 max-w-[180px] xs:max-w-[210px] sm:max-w-[240px]">
+                <div className="branding-container flex-1 h-full min-w-0">
                   <img
                     src="/images/mani-brand-name-original.png"
                     alt="MANI Solution"
