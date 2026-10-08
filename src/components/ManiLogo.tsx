@@ -61,12 +61,16 @@ export const ManiLogo: React.FC<ManiLogoProps> = ({
     >
       {/* Round Shape Brand Logo Image */}
       <div className={`relative flex items-center justify-center shrink-0 rounded-full overflow-hidden border-2 border-[#C79A22]/70 shadow-md bg-slate-950 ${iconSizeMap[size]}`}>
-        {isCustom && !hasError && logoUrl ? (
+        {!hasError && logoUrl ? (
           <img
             src={logoUrl}
             alt="MANI Solution Logo"
             onError={() => {
-              setHasError(true);
+              if (logoUrl !== '/logo.png') {
+                setLogoUrl('/logo.png');
+              } else {
+                setHasError(true);
+              }
             }}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover rounded-full transition-transform duration-300 group-hover:scale-110"
